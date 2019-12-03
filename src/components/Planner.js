@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Tabs, Modal } from 'antd';
 
 import { planContext } from '../contexts';
+import Courses from '../components/Courses';
 
 const { TabPane } = Tabs;
 
@@ -11,6 +12,12 @@ export default (props) => {
   const [newIdx, setNewIdx] = useState(1);
   const { selected, plans, updatePlan } = useContext(planContext);
   // const { courses, updateCourse } = useContext(courseContext);
+  const updatePlanCourse = selectedRowKeys => {
+    const newPlan = [...plans];
+    const targetIdx = newPlan.findIndex(plan => plan.key === selected);
+    newPlan[targetIdx].courses = selectedRowKeys;
+    updatePlan({ plans });
+  }
 
   function onChange(activeKey) {
     updatePlan({selected: activeKey});
@@ -21,7 +28,7 @@ export default (props) => {
       const activeKey = `plan${newIdx}`
       updatePlan({
         selected: activeKey,
-        plans: [...plans, {name: `แผน ${newIdx}`, courses: {}, key: activeKey}]
+        plans: [...plans, {name: `แผน ${newIdx}`, courses: [], key: activeKey}]
       })
       setNewIdx(newIdx => newIdx + 1)
     },
@@ -70,7 +77,7 @@ export default (props) => {
     activeKey={`${selected}`}>
     {plans.map((plan, idx) => 
       <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-        Plan content {idx}
+        <Courses courses={plan.courses} updatePlanCourse={updatePlanCourse} />
       </TabPane>
     )}
   </Tabs>

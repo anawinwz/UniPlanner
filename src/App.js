@@ -11,14 +11,14 @@ function App() {
     selected: 'default',
     plans: [{
       name: 'แผนเริ่มต้น',
-      courses: {},
+      courses: [],
       key: 'default'
     }],
     updatePlan: update => setPlan(plan => ({...plan, ...update}))
   })
   const [course, setCourse] = useState({
-    courses: {},
-    updateCourse: course => setCourse(course)
+    courses: [],
+    updateCourse: update => setCourse(course => ({...course, ...update}))
   })
   return (
     <planContext.Provider value={plan}>
