@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, DatePicker } from 'antd';
 
 import { courseContext } from '../contexts';
 
@@ -22,7 +22,11 @@ class EditableCell extends React.Component {
     const editing = !this.state.editing;
     this.setState({ editing }, () => {
       if (editing) {
-        this.input.focus();
+        try { 
+          this.input.focus();
+        } catch (err) {
+
+        }
       }
     });
   };
@@ -42,17 +46,19 @@ class EditableCell extends React.Component {
     this.form = form;
     const { children, dataIndex, record, title } = this.props;
     const { editing } = this.state;
+    const isDatePicker = ['midterm','final'].includes(dataIndex);
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
           rules: [
             {
+              type: (isDatePicker) ? 'array' : undefined,
               required: true,
-              message: `${title} is required.`,
+              message: `ต้องระบุ${title}`,
             },
           ],
           initialValue: record[dataIndex],
-        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} placeholder={title} />)}
+        })(isDatePicker ? <DatePicker.RangePicker showTime format="DD MMM YY HH:mm" onOpenChange={status => {if (!status) this.save();}} /> : <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} placeholder={title} />)}
       </Form.Item>
     ) : (
       <div
@@ -60,7 +66,7 @@ class EditableCell extends React.Component {
         style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
-        {record[dataIndex] ? children : (<span style={{color: '#525151'}}>{title}</span>)}
+        {record[dataIndex] ? (isDatePicker ? record[dataIndex][0].format('DD MMM YY HH:mm')+'-'+record[dataIndex][1].format('HH:mm') : children) : (<span style={{color: '#525151'}}>{title}</span>)}
       </div>
     );
   };
@@ -97,22 +103,25 @@ class EditableTable extends React.Component {
       {
         title: 'ชื่อ/รหัสแทนวิชา',
         dataIndex: 'codename',
-        width: '30%',
+        width: '25%',
         editable: true,
       },
       {
         title: 'เวลาเรียน',
         dataIndex: 'classdays',
+        width: '20%',
         editable: true,
       },
       {
         title: 'สอบกลางภาค',
         dataIndex: 'midterm',
+        width: '24.67%',
         editable: true,
       },
       {
         title: 'สอบปลายภาค',
         dataIndex: 'final',
+        width: '24.67%',
         editable: true,
       },
       {
