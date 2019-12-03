@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Main from './pages/Main';
 import NotFound from './pages/NotFound';
 
+import './App.css'
+
 import { planContext, courseContext } from './contexts';
 
 function App() {

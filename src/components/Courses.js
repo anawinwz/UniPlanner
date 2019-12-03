@@ -52,7 +52,7 @@ class EditableCell extends React.Component {
             },
           ],
           initialValue: record[dataIndex],
-        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
+        })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} placeholder={title} />)}
       </Form.Item>
     ) : (
       <div
@@ -60,7 +60,7 @@ class EditableCell extends React.Component {
         style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
-        {children}
+        {record[dataIndex] ? children : (<span style={{color: '#525151'}}>{title}</span>)}
       </div>
     );
   };
@@ -95,23 +95,29 @@ class EditableTable extends React.Component {
     super(props);
     this.columns = [
       {
-        title: 'name',
-        dataIndex: 'name',
+        title: 'ชื่อ/รหัสแทนวิชา',
+        dataIndex: 'codename',
         width: '30%',
         editable: true,
       },
       {
-        title: 'age',
-        dataIndex: 'age',
+        title: 'เวลาเรียน',
+        dataIndex: 'classdays',
         editable: true,
       },
       {
-        title: 'address',
-        dataIndex: 'address',
+        title: 'สอบกลางภาค',
+        dataIndex: 'midterm',
         editable: true,
       },
       {
-        title: 'operation',
+        title: 'สอบปลายภาค',
+        dataIndex: 'final',
+        editable: true,
+      },
+      {
+        title: '',
+        width: '5%',
         dataIndex: 'operation',
         render: (text, record) => <Popconfirm title="แน่ใจหรือว่าต้องการลบ?" onConfirm={() => this.handleDelete(record.key)}>
               <a>ลบ</a>
@@ -128,9 +134,10 @@ class EditableTable extends React.Component {
   handleAdd = () => {
     const newData = {
       key: Math.random(),
-      name: `Edward King`,
-      age: 32,
-      address: `London, Park Lane no.`,
+      codename: '',
+      classdays: '',
+      midterm: '',
+      final: ''
     };
     this.context.updateCourse({
       courses: [...this.context.courses, newData]
@@ -190,6 +197,7 @@ class EditableTable extends React.Component {
           bordered
           dataSource={this.context.courses}
           columns={columns}
+          size="middle"
         />
       </div>
     );
