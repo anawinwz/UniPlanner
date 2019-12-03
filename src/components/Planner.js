@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Modal } from 'antd';
 
 import { planContext } from '../contexts';
 
@@ -26,6 +26,16 @@ export default (props) => {
       setNewIdx(newIdx => newIdx + 1)
     },
     remove: targetKey => {
+      const target = plans.find(plan => plan.key === targetKey);
+      Modal.confirm({
+        title: 'ยืนยันการลบแผน',
+        content: `คุณแน่ใจหรือว่าต้องการลบแผน [${target.name}]?`,
+        onOk() {
+          actions.removeConfirmed(targetKey);
+        }
+      });
+    },
+    removeConfirmed: targetKey => {
       if (plans.length === 1) {
         return false;
       }
@@ -49,7 +59,6 @@ export default (props) => {
     }
   };
   function onEdit(targetKey, action) {
-    console.log(action, targetKey);
     actions[action](targetKey);
   }
 
