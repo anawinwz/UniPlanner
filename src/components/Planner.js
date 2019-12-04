@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Tabs, Modal } from 'antd';
+import { Tabs, Modal, Layout } from 'antd';
 
 import { planContext } from '../contexts';
 import Courses from '../components/Courses';
 
+const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
 // const operations = <Button>เพิ่ม Plan</Button>;
@@ -11,13 +12,6 @@ const { TabPane } = Tabs;
 export default (props) => {
   const [newIdx, setNewIdx] = useState(1);
   const { selected, plans, updatePlan } = useContext(planContext);
-  // const { courses, updateCourse } = useContext(courseContext);
-  const updatePlanCourse = selectedRowKeys => {
-    const newPlan = [...plans];
-    const targetIdx = newPlan.findIndex(plan => plan.key === selected);
-    newPlan[targetIdx].courses = selectedRowKeys;
-    updatePlan({ plans });
-  }
 
   function onChange(activeKey) {
     updatePlan({selected: activeKey});
@@ -70,16 +64,23 @@ export default (props) => {
   }
 
   return (
-  <Tabs
-    type="editable-card"
-    onEdit={onEdit}
-    onChange={onChange}
-    activeKey={`${selected}`}>
-    {plans.map((plan, idx) => 
-      <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-        <Courses courses={plan.courses} updatePlanCourse={updatePlanCourse} />
-      </TabPane>
-    )}
-  </Tabs>
+    <Layout>
+      <Sider><Courses /></Sider>
+      <Content>
+        <Tabs
+          type="editable-card"
+          onEdit={onEdit}
+          onChange={onChange}
+          activeKey={`${selected}`}>
+          {plans.map((plan, idx) => 
+            <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
+              
+                Content
+            </TabPane>
+          )}
+        </Tabs>
+      </Content>
+    </Layout>
+  
   )
 }
