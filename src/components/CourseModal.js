@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 
 import { Modal } from 'antd';
 import { courseContext } from '../contexts';
+import CourseForm from './CourseForm';
 
 export default (props) => {
   const { courses, updateCourse } = useContext(courseContext);
@@ -18,6 +19,6 @@ export default (props) => {
     onOk={props.handleOk}
     onCancel={props.handleCancel}
   >
-    <p>Some contents...</p>
+    <CourseForm />
   </Modal>
 };
