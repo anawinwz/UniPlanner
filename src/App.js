@@ -19,13 +19,15 @@ function App() {
     updatePlan: update => setPlan(plan => ({...plan, ...update}))
   })
   const [course, setCourse] = useState({
-    courses: [{
-      key: '01204322',
-      name: 'Embedded',
-      sections: [
-        { name: '1', key: '1' }
-      ]
-    }],
+    courses: [
+      // {
+      //   key: '01204322',
+      //   name: 'Embedded',
+      //   sections: [
+      //     { name: '1', key: '1' }
+      //   ]
+      // }
+    ],
     updateCourse: update => setCourse(course => ({...course, ...update}))
   })
   return (
