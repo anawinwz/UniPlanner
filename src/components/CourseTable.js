@@ -1,19 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { Table, Tag } from 'antd';
-import { planContext, courseContext } from '../contexts';
 
 export default (props) => {
 
-  const { selected, plans } = useContext(planContext);
-
-  const selectedIdx = plans.findIndex(plan => plan.key === selected);
-  const selectedPlan = plans[selectedIdx];
-
-  const { courses } = useContext(courseContext);
-
-  const filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => selectedPlan.courses.includes(`${course.key}_${section.key}`))}) )
-                                .filter(course => course.sections.length > 0)
   const dowTag = dow => {
     switch (dow) {
       case 'M': return <Tag color="gold">จันทร์</Tag>
@@ -38,5 +28,5 @@ export default (props) => {
       }
     }
   ]
-  return <Table size="small" dataSource={filteredCourses} columns={columns} />
+  return <Table size="small" dataSource={props.filteredCourses} columns={columns} />
 };

@@ -4,6 +4,8 @@ import { Tabs, Modal, Layout } from 'antd';
 import { planContext, courseContext } from '../contexts';
 import Courses from '../components/Courses';
 import CourseTable from './CourseTable';
+import Timetable from 'react-timetable-events'
+import moment from 'moment';
 
 const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -65,6 +67,7 @@ export default (props) => {
     actions[action](targetKey);
   }
 
+  
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider><Courses /></Sider>
@@ -74,12 +77,26 @@ export default (props) => {
           onEdit={onEdit}
           onChange={onChange}
           activeKey={`${selected}`}>
-          {plans.map((plan, idx) => 
-            <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-              
-              <CourseTable />
+          {plans.map((plan, idx) => {
+            const filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
+                                            .filter(course => course.sections.length > 0)
+            let events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
+            filteredCourses.map(course => { course.sections[0].lects.map(lect => {
+              lect.dow.map(dow => {
+                if (typeof events[dow] === 'undefined') events[dow] = [];
+                events[dow].push({
+                  name: course.name,
+                  type: 'custom',
+                  startTime: moment(lect.start, 'H:mm'),
+                  endTime: moment(lect.end, 'H:mm')
+                });
+              });
+            })});
+            return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
+              <Timetable hoursInterval={[8,20]} events={events} />
+              <CourseTable filteredCourses={filteredCourses} />
             </TabPane>
-          )}
+          })}
         </Tabs>
       </Content>
     </Layout>
