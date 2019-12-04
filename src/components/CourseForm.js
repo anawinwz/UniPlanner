@@ -66,7 +66,7 @@ const CourseForm = forwardRef(({form}, ref) => {
                   }
                 ]
               })(
-              <Select mode="tags" placeholder={`วันเรียนในสัปดาห์`}>
+              <Select mode="multiple" placeholder={`วันเรียนในสัปดาห์`}>
                   <Option key="M">จันทร์</Option>
                   <Option key="T">อังคาร</Option>
                   <Option key="W">พุธ</Option>

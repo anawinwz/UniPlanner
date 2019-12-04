@@ -20,13 +20,8 @@ function App() {
   })
   const [course, setCourse] = useState({
     courses: [
-      // {
-      //   key: '01204322',
-      //   name: 'Embedded',
-      //   sections: [
-      //     { name: '1', key: '1' }
-      //   ]
-      // }
+      {"key":"01204322","credits":3,"name":"Embedded","sections":[{"name":1,"lects":[{"dow":["M"],"start":"13:00","end":"16:00"}],"key":1}]},
+      {"key":"01205386","credits":1,"name":"Elect.Lab.","sections":[{"name":"11","lects":[{"dow":["Th"],"start":"13:00","end":"16:00"}],"key":"11"}]}
     ],
     updateCourse: update => setCourse(course => ({...course, ...update}))
   })

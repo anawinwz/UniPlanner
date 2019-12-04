@@ -18,6 +18,7 @@ export default (props) => {
   }
   function handleOk() {
     setModal({visible: false});
+    console.log(JSON.stringify(courses));
   }
   function handleCancel() {
     setModal({visible: false});
@@ -44,13 +45,13 @@ export default (props) => {
       <Tree
         selectable={false}
         checkable
-        defaultExpandedKeys={courses.filter(course => course.sections.length > 1).map(course => course.key)}
-        defaultCheckedKeys={selectedPlan.courses}
+        checkedKeys={selectedPlan.courses}
         onSelect={onSelect}
         onCheck={onCheck}
+        style={{textAlign: 'left'}}
       >
         {courses.map(course => 
-          <TreeNode title={course.name} key={course.key}>
+          <TreeNode title={course.name} key={course.key} expanded={course.sections.length > 1}>
             {course.sections.map(section => <TreeNode title={`หมู่เรียน ${section.name}`} key={`${course.key}_${section.key}`} />)}
           </TreeNode>
         )}
