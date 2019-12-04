@@ -17,3 +17,7 @@
   color: inherit;
   background: #252935;
 }
+
+.ant-time-picker-panel-input {
+  background: transparent;
+}

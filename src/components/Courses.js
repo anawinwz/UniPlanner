@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Input, Button, Popconfirm, Form, DatePicker, TimePicker } from 'antd';
 
 import { courseContext } from '../contexts';
+import moment from 'moment';
 
 const EditableContext = React.createContext();
 
@@ -56,8 +57,14 @@ class EditableCell extends React.Component {
       specialRender = (typeof record[dataIndex] !== specialType) ? '' : record[dataIndex].format('D MMM YY')
     } else if (isTimePicker) {
       specialType = 'object'
-      specialEditCtrl = <TimePicker open format="HH:mm" minuteStep={5} onOpenChange={status => {if (!status) this.save();}} />
-      specialRender = (typeof record[dataIndex] !== specialType) ? '' : record[dataIndex].format('HH:mm')
+      specialEditCtrl = <TimePicker
+        open
+        format="H:mm"
+        defaultOpenValue={moment('8:30', 'H:mm')}
+        minuteStep={5}
+        disabledHours={() => [0,1,2,3,4,5,6,21,22,23]}
+        onOpenChange={status => {if (!status) this.save();}} />
+      specialRender = (typeof record[dataIndex] !== specialType) ? '' : record[dataIndex].format('H:mm')
     }
 
     return editing ? (
