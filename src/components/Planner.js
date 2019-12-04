@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Tabs, Modal, Layout } from 'antd';
 
-import { planContext } from '../contexts';
+import { planContext, courseContext } from '../contexts';
 import Courses from '../components/Courses';
 
 const { Sider, Content } = Layout;
@@ -12,6 +12,7 @@ const { TabPane } = Tabs;
 export default (props) => {
   const [newIdx, setNewIdx] = useState(1);
   const { selected, plans, updatePlan } = useContext(planContext);
+  const { courses } = useContext(courseContext);
 
   function onChange(activeKey) {
     updatePlan({selected: activeKey});
@@ -22,7 +23,7 @@ export default (props) => {
       const activeKey = `plan${newIdx}`
       updatePlan({
         selected: activeKey,
-        plans: [...plans, {name: `แผน ${newIdx}`, courses: [], key: activeKey}]
+        plans: [...plans, {name: `แผน ${newIdx}`, courses: courses.filter(course => course.required && course.sections.length === 1).map(course => course.key+'_'+course.sections[0].key), key: activeKey}]
       })
       setNewIdx(newIdx => newIdx + 1)
     },
@@ -64,7 +65,7 @@ export default (props) => {
   }
 
   return (
-    <Layout>
+    <Layout style={{ minHeight: '100vh' }}>
       <Sider><Courses /></Sider>
       <Content>
         <Tabs

@@ -51,7 +51,7 @@ export default (props) => {
         style={{textAlign: 'left'}}
       >
         {courses.map(course => 
-          <TreeNode title={course.name} key={course.key} expanded={course.sections.length > 1}>
+          <TreeNode title={course.name+((course.required)?'**':'')} key={course.key} expanded={course.sections.length > 1}>
             {course.sections.map(section => <TreeNode title={`หมู่เรียน ${section.name}`} key={`${course.key}_${section.key}`} />)}
           </TreeNode>
         )}

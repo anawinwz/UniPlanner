@@ -1,6 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 
-import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon } from 'antd';
+import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox } from 'antd';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -49,6 +49,9 @@ const CourseForm = forwardRef(({form}, ref) => {
             message: 'ต้องระบุชื่อวิชา',
           }
         ]})(<Input placeholder="ชื่อวิชา" />)}
+    </Form.Item>
+    <Form.Item label=" ">
+      {getFieldDecorator('required')(<Checkbox>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 
