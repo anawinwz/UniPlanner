@@ -52,12 +52,12 @@ class EditableCell extends React.Component {
     let specialEditCtrl, specialRender, specialType
     if (isDatePicker) {
       specialType = 'object'
-      specialEditCtrl = <DatePicker onOpenChange={status => {if (!status) this.save();}} />
-      specialRender = (typeof record[dataIndex] !== 'object') ? '' : record[dataIndex].format('DD MMM YY')
+      specialEditCtrl = <DatePicker open format="D MMM YY" onOpenChange={status => {if (!status) this.save();}} />
+      specialRender = (typeof record[dataIndex] !== specialType) ? '' : record[dataIndex].format('D MMM YY')
     } else if (isTimePicker) {
-      specialType = 'array'
-      specialEditCtrl = <TimePicker onOpenChange={status => {if (!status) this.save();}} />
-      specialRender = (typeof record[dataIndex] !== 'array') ? '' : record[dataIndex][0].format('HH:mm') + '-' + record[dataIndex][1].format('HH:mm')
+      specialType = 'object'
+      specialEditCtrl = <TimePicker open format="HH:mm" minuteStep={5} onOpenChange={status => {if (!status) this.save();}} />
+      specialRender = (typeof record[dataIndex] !== specialType) ? '' : record[dataIndex].format('HH:mm')
     }
 
     return editing ? (
