@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Button, Popconfirm, Form, DatePicker } from 'antd';
+import { Table, Input, Button, Popconfirm, Form, DatePicker, TimePicker } from 'antd';
 
 import { courseContext } from '../contexts';
 
@@ -46,19 +46,32 @@ class EditableCell extends React.Component {
     this.form = form;
     const { children, dataIndex, record, title } = this.props;
     const { editing } = this.state;
-    const isDatePicker = ['midterm','final'].includes(dataIndex);
+    const isDatePicker = ['midterm_date','final_date'].includes(dataIndex);
+    const isTimePicker = ['midterm_time','final_time'].includes(dataIndex);
+
+    let specialEditCtrl, specialRender, specialType
+    if (isDatePicker) {
+      specialType = 'object'
+      specialEditCtrl = <DatePicker onOpenChange={status => {if (!status) this.save();}} />
+      specialRender = (typeof record[dataIndex] !== 'object') ? '' : record[dataIndex].format('DD MMM YY')
+    } else if (isTimePicker) {
+      specialType = 'array'
+      specialEditCtrl = <TimePicker onOpenChange={status => {if (!status) this.save();}} />
+      specialRender = (typeof record[dataIndex] !== 'array') ? '' : record[dataIndex][0].format('HH:mm') + '-' + record[dataIndex][1].format('HH:mm')
+    }
+
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
           rules: [
             {
-              type: (isDatePicker) ? 'array' : undefined,
+              type: (specialType) ? specialType : undefined,
               required: true,
               message: `ต้องระบุ${title}`,
             },
           ],
           initialValue: record[dataIndex],
-        })(isDatePicker ? <DatePicker.RangePicker showTime format="DD MMM YY HH:mm" onOpenChange={status => {if (!status) this.save();}} /> : <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} placeholder={title} />)}
+        })(specialType ? specialEditCtrl : <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} placeholder={title} />)}
       </Form.Item>
     ) : (
       <div
@@ -66,7 +79,7 @@ class EditableCell extends React.Component {
         style={{ paddingRight: 24 }}
         onClick={this.toggleEdit}
       >
-        {record[dataIndex] ? (isDatePicker ? record[dataIndex][0].format('DD MMM YY HH:mm')+'-'+record[dataIndex][1].format('HH:mm') : children) : (<span style={{color: '#525151'}}>{title}</span>)}
+        {record[dataIndex] ? (specialType ? specialRender : children) : (<span style={{color: '#525151'}}>{title}</span>)}
       </div>
     );
   };
@@ -114,15 +127,37 @@ class EditableTable extends React.Component {
       },
       {
         title: 'สอบกลางภาค',
-        dataIndex: 'midterm',
-        width: '24.67%',
-        editable: true,
+        children: [
+          {
+            title: 'วัน',
+            dataIndex: 'midterm_date',
+            width: '12.67%',
+            editable: true,
+          },
+          {
+            title: 'เวลา',
+            dataIndex: 'midterm_time',
+            width: '12%',
+            editable: true
+          }
+        ]
       },
       {
         title: 'สอบปลายภาค',
-        dataIndex: 'final',
-        width: '24.67%',
-        editable: true,
+        children: [
+          {
+            title: 'วัน',
+            dataIndex: 'final_date',
+            width: '12.67%',
+            editable: true,
+          },
+          {
+            title: 'เวลา',
+            dataIndex: 'final_time',
+            width: '12%',
+            editable: true
+          }
+        ]
       },
       {
         title: '',
@@ -145,8 +180,10 @@ class EditableTable extends React.Component {
       key: Math.random(),
       codename: '',
       classdays: '',
-      midterm: '',
-      final: ''
+      midterm_date: '',
+      midterm_time: '',
+      final_date: '',
+      final_time: '',
     };
     this.context.updateCourse({
       courses: [...this.context.courses, newData]
@@ -180,7 +217,23 @@ class EditableTable extends React.Component {
       },
     };
     const columns = this.columns.map(col => {
-      if (!col.editable) {
+      if (col.children) {
+        col.children = col.children.map(child => {
+          if (!child.editable) {
+            return child;
+          }
+          return {
+            ...child, 
+            onCell: record => ({
+              record,
+              editable: child.editable,
+              dataIndex: child.dataIndex,
+              title: `${child.title}${col.title}`,
+              handleSave: this.handleSave,
+            })
+          }
+        })
+      } else if (!col.editable) {
         return col;
       }
       return {
