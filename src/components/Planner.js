@@ -3,6 +3,7 @@ import { Tabs, Modal, Layout } from 'antd';
 
 import { planContext, courseContext } from '../contexts';
 import Courses from '../components/Courses';
+import CourseTable from './CourseTable';
 
 const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -76,7 +77,7 @@ export default (props) => {
           {plans.map((plan, idx) => 
             <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
               
-                Content
+              <CourseTable />
             </TabPane>
           )}
         </Tabs>
