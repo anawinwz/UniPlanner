@@ -86,7 +86,7 @@ export default (props) => {
               lect.dow.map(dow => {
                 if (typeof events[dow] === 'undefined') events[dow] = [];
                 events[dow].push({
-                  name: course.name,
+                  name: `${course.key} ${course.name}`,
                   type: 'custom',
                   startTime: moment(lect.start, 'H:mm'),
                   endTime: moment(lect.end, 'H:mm')
