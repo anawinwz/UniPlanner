@@ -30,7 +30,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     form,
   }));
 
-  const { getFieldDecorator, getFieldValue } = form;
+  const { getFieldDecorator } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },

@@ -13,6 +13,7 @@ export default (props) => {
       case 'F': return <Tag color="blue" key={dow}>ศุกร์</Tag>
       case 'Sa': return <Tag color="purple" key={dow}>เสาร์</Tag>
       case 'Su': return <Tag color="red" key={dow}>อาทิตย์</Tag>
+      default: return <Tag key={dow}>{dow}</Tag>
     }
   };
 
@@ -39,7 +40,7 @@ export default (props) => {
     }
   ]
   const tableFooter = pageData => {
-    if (pageData.length == 0) return <span></span>;
+    if (pageData.length === 0) return <span></span>;
     return <span>หน่วยกิตรวม: {pageData.reduce((previous, current) => (previous.credits || previous) + (current.credits || 0))}</span>
   }
   return <Table size="small" dataSource={props.filteredCourses} columns={columns} footer={tableFooter} rowKey="key" pagination={false} />
