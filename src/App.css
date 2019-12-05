@@ -21,3 +21,7 @@
 .ant-time-picker-panel-input {
   background: transparent;
 }
+
+td > p:last-child {
+  margin: 0;
+}
