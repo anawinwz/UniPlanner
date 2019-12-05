@@ -157,14 +157,14 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
       </div>
     )}
     
-    <Button type="dashed" ghost onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
+    <Button type="dashed" ghost style={{width: '50%'}} onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
     {sections.length > 1 && <Popconfirm
       title="ต้องการลบหมู่เรียนล่าสุดหรือไม่?"
       onConfirm={removeLastSection}
       okText="ลบ"
       cancelText="ไม่"
     >
-      <Button type="dashed" ghost><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
+      <Button type="dashed" ghost style={{width: '50%'}}><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
     </Popconfirm>}
 
     
