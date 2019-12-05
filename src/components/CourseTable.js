@@ -18,13 +18,17 @@ export default (props) => {
 
   const columns = [
     { title: 'รหัสวิชา', dataIndex: 'key', width: '15%' },
-    { title: 'ชื่อวิชา', dataIndex: 'name', width: '20%' },
+    { title: 'ชื่อวิชา', dataIndex: 'name', width: '20%',
+      render(text, record, index) {
+        return <span>{text} {record.required && <Tag color="#f50">บังคับ</Tag>}</span>
+      }
+    },
     { title: 'หน่วยกิต', dataIndex: 'credits', width: '10%' },
     { title: 'หมู่เรียน', dataIndex: 'sections[0].name', width: '15%'},
     {
       title: 'เวลาเรียน',
       render(text, record, index) {
-      return record.sections[0].lects.map(lect => <p>{lect.dow.map(dow => dowTag(dow))} {lect.start}-{lect.end}</p>)
+        return record.sections[0].lects.map(lect => <p>{lect.dow.map(dow => dowTag(dow))} {lect.start}-{lect.end}</p>)
       }
     }
   ]
