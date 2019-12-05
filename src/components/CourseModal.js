@@ -1,6 +1,6 @@
 import React, { useContext, createRef } from 'react';
 
-import { Modal } from 'antd';
+import { Modal, Popconfirm, Button, Icon } from 'antd';
 import { courseContext } from '../contexts';
 import CourseForm from './CourseForm';
 
@@ -62,11 +62,35 @@ export default (props) => {
       });
     } else if (typeof props.handleCancel === 'function') props.handleCancel();
   }
+  function removeThisCourse() {
+    if (mode !== 'edit') return;
+
+    const newCourses = [...courses];
+    delete newCourses[targetIdx];
+    updateCourse({ courses: newCourses });
+    if (typeof props.handleCancel === 'function') props.handleCancel();
+  }
 
   return <Modal
     title={mode === 'edit' ? `แก้ไขข้อมูลรายวิชา` : `เพิ่มข้อมูลรายวิชา`}
     visible={props.visible}
-    onOk={handleOk}
+    footer={[
+      <Button key="back" onClick={handleCancel}>
+        ยกเลิก
+      </Button>,
+
+      mode === 'edit' ? <Popconfirm
+        title="ต้องการลบวิชานี้หรือไม่?"
+        onConfirm={removeThisCourse}
+        okText="ลบ"
+        cancelText="ไม่">
+        <Button type="danger">ลบทิ้ง</Button>
+      </Popconfirm> : <span></span>,
+
+      <Button key="submit" type="primary" onClick={handleOk}>
+        <Icon type="check" /> {mode === 'edit' ? 'บันทึก' : 'เพิ่ม'}
+      </Button>,
+    ]}
     onCancel={handleCancel}
   >
     <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} />
