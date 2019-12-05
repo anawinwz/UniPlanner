@@ -18,7 +18,6 @@ export default (props) => {
   }
   function handleOk() {
     setModal({visible: false});
-    console.log(JSON.stringify(courses));
   }
   function handleCancel() {
     setModal({visible: false});

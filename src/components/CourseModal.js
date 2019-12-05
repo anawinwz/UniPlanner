@@ -37,12 +37,30 @@ export default (props) => {
       if (typeof props.handleOk === 'function') props.handleOk();
     });
   }
+  function handleCancel() {
+    const { form } = formRef.current;
+    const values = form.getFieldsValue()
+
+    const isNonEmpty = obj => Object.values(obj).some(value => (typeof value !== 'undefined' && typeof value !== 'object') || (typeof value === 'object' && isNonEmpty(value)));
+
+    if (isNonEmpty(values)) {
+      Modal.confirm({
+        title: 'ยืนยันการยกเลิก',
+        content: `คุณแน่ใจหรือว่าต้องการยกเลิกความเปลี่ยนแปลง?`,
+        onOk() {
+          if (typeof props.handleCancel === 'function') props.handleCancel();
+        },
+        okText: 'ใช่',
+        cancelText: 'ไม่'
+      });
+    } else if (typeof props.handleCancel === 'function') props.handleCancel();
+  }
 
   return <Modal
     title={mode === 'edit' ? `แก้ไขข้อมูลรายวิชา` : `เพิ่มข้อมูลรายวิชา`}
     visible={props.visible}
     onOk={handleOk}
-    onCancel={props.handleCancel}
+    onCancel={handleCancel}
   >
     <CourseForm wrappedComponentRef={formRef} />
   </Modal>
