@@ -25,3 +25,8 @@
 td > p:last-child {
   margin: 0;
 }
+
+.ant-btn-background-ghost {
+  color: #7d7d7d;
+  border-color: #7d7d7d;
+}

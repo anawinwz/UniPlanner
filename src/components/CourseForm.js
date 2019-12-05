@@ -1,6 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 
-import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox } from 'antd';
+import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox, Card, Popconfirm } from 'antd';
 import moment from 'moment';
 const { Option } = Select;
 
@@ -30,8 +30,20 @@ const CourseForm = forwardRef(({form}, ref) => {
     setSections(newSections);
   }
 
+  function removeLastLect(sIdx) {
+    const newSections = [...sections];
+    newSections[sIdx].lects.pop();
+    setSections(newSections);
+  }
+
   function addSection() {
     setSections([...sections, { lects: [{}] }]);
+  }
+
+  function removeLastSection() {
+    const newSections = [...sections];
+    newSections.pop();
+    setSections(newSections);
   }
 
   return <Form {...formItemLayout} colon={false}>
@@ -58,27 +70,41 @@ const CourseForm = forwardRef(({form}, ref) => {
       <div>
         <Form.Item label="ชื่อแทนหมู่เรียน">
           {getFieldDecorator(`sections[${sIdx}][name]`)(<Input placeholder={`${sIdx+1}`} />)}
-          <Divider>เวลาเรียน</Divider>
           {section.lects.map((lect, lectIdx) => {
-            return <div>
-              {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][dow]`, {
-                rules: [
-                  {
-                    required: true,
-                    message: 'ต้องระบุวันเรียนในสัปดาห์'
-                  }
-                ]
-              })(
-              <Select mode="multiple" placeholder={`วันเรียนในสัปดาห์`}>
-                  <Option key="M">จันทร์</Option>
-                  <Option key="T">อังคาร</Option>
-                  <Option key="W">พุธ</Option>
-                  <Option key="Th">พฤหัสบดี</Option>
-                  <Option key="F">ศุกร์</Option>
-                  <Option key="Sa">เสาร์</Option>
-                  <Option key="Su">อาทิตย์</Option>
-                </Select>)}
+            return <Card size="small" actions={
+              (section.lects.length === 1 || section.lects.length - 1 !== lectIdx) ? [] : 
+              [
+                <Popconfirm
+                  title="ต้องการลบชุดเวลาเรียนนี้หรือไม่?"
+                  onConfirm={() => removeLastLect(sIdx)}
+                  okText="ลบ"
+                  cancelText="ไม่"
+                >
+                  <Icon type="delete" key="delete" />
+                </Popconfirm>
+              ]
+            }>
+              <Form.Item style={{margin: 0}}>
+                {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][dow]`, {
+                  rules: [
+                    {
+                      required: true,
+                      message: 'ต้องระบุวันเรียนในสัปดาห์'
+                    }
+                  ]
+                })(
+                <Select mode="multiple" placeholder={`วันเรียนในสัปดาห์`}>
+                    <Option key="M">จันทร์</Option>
+                    <Option key="T">อังคาร</Option>
+                    <Option key="W">พุธ</Option>
+                    <Option key="Th">พฤหัสบดี</Option>
+                    <Option key="F">ศุกร์</Option>
+                    <Option key="Sa">เสาร์</Option>
+                    <Option key="Su">อาทิตย์</Option>
+                  </Select>)}
+                </Form.Item>
               <Input.Group>
+                <Form.Item style={{margin: 0, display: 'inline-block', width: 'calc(50% - 12px)'}}>
                 {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][start]`, {
                   rules: [
                     {
@@ -88,6 +114,8 @@ const CourseForm = forwardRef(({form}, ref) => {
                     }
                   ]
                 })(<TimePicker format="H:mm" minuteStep={5} defaultOpenValue={moment('9:00')} placeholder="เวลาเริ่ม" />)}
+                </Form.Item>
+                <Form.Item style={{margin: 0, display: 'inline-block', width: 'calc(50% - 12px)'}}>
                 {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][end]`, {
                   rules: [
                     {
@@ -97,14 +125,25 @@ const CourseForm = forwardRef(({form}, ref) => {
                     }
                   ]
                 })(<TimePicker format="H:mm" minuteStep={5} placeholder="เวลาเลิก"  />)}
+                </Form.Item>
               </Input.Group>
-            </div>
+            </Card>
           })}
-          <Button type="dashed" onClick={() => addLect(sIdx)}><Icon type="plus" /> เพิ่มเวลาเรียน</Button>
+          <Button type="dashed" ghost onClick={() => addLect(sIdx)}><Icon type="plus" /> เพิ่มเวลาเรียน</Button>
         </Form.Item>
       </div>
     )}
-    <Button type="dashed" onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
+    
+    <Button type="dashed" ghost onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
+    {sections.length > 1 && <Popconfirm
+      title="ต้องการลบหมู่เรียนล่าสุดหรือไม่?"
+      onConfirm={removeLastSection}
+      okText="ลบ"
+      cancelText="ไม่"
+    >
+      <Button type="dashed" ghost><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
+    </Popconfirm>}
+
     
     
   </Form>
