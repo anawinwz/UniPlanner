@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Table, Tag } from 'antd';
+import { Table, Tag, Input } from 'antd';
 
 export default (props) => {
 
@@ -30,7 +30,16 @@ export default (props) => {
       render(text, record, index) {
         return record.sections[0].lects.map(lect => <p>{lect.dow.map(dow => dowTag(dow))} {lect.start}-{lect.end}</p>)
       }
+    },
+    {
+      title: 'หมายเหตุ',
+      render(text, record, index) {
+        return <Input />
+      }
     }
   ]
-  return <Table size="small" dataSource={props.filteredCourses} columns={columns} />
+  const tableFooter = pageData => {
+    return <span>หน่วยกิตรวม: {pageData.reduce((previous, current) => (previous.credits || previous) + (current.credits || 0))}</span>
+  }
+  return <Table size="small" dataSource={props.filteredCourses} columns={columns} footer={tableFooter} />
 };
