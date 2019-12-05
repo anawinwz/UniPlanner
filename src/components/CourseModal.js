@@ -7,10 +7,11 @@ import CourseForm from './CourseForm';
 export default (props) => {
   const { courses, updateCourse } = useContext(courseContext);
   
-  const mode = (props.key) ? 'edit' : 'add';
+  const mode = (props.courseKey) ? 'edit' : 'add';
+  let targetIdx, targetInfo
   if (mode === 'edit') {
-    const targetIdx = courses.findIndex(course => course.key === props.key);
-    const targetInfo = courses[targetIdx];
+    targetIdx = courses.findIndex(course => course.key === props.courseKey);
+    targetInfo = courses[targetIdx];
   }
   
   const formRef = createRef();
@@ -33,7 +34,13 @@ export default (props) => {
         return section;
       });
 
-      updateCourse({ courses: [...courses, values] });
+      if (mode === 'edit') {
+        const newCourses = [...courses];
+        newCourses[targetIdx] = values;
+        updateCourse({ courses: newCourses });
+      } else {
+        updateCourse({ courses: [...courses, values] });
+      }
       if (typeof props.handleOk === 'function') props.handleOk();
     });
   }
@@ -62,6 +69,6 @@ export default (props) => {
     onOk={handleOk}
     onCancel={handleCancel}
   >
-    <CourseForm wrappedComponentRef={formRef} />
+    <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} />
   </Modal>
 };

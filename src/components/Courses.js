@@ -30,6 +30,7 @@ export default (props) => {
 
   function onSelect(selectedKeys, info) {
     console.log('selected', selectedKeys, info);
+    if (selectedKeys.length === 1) showEditModal(selectedKeys[0].split('_')[0]);
   }
 
   function onCheck(checkedKeys, info) {
@@ -42,7 +43,6 @@ export default (props) => {
     <div>
       <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button>
       <Tree
-        selectable={false}
         checkable
         checkedKeys={selectedPlan.courses}
         onSelect={onSelect}
@@ -55,7 +55,7 @@ export default (props) => {
           </TreeNode>
         )}
       </Tree>
-      <CourseModal visible={modal.visible} handleOk={handleOk} handleCancel={handleCancel} />
+      <CourseModal visible={modal.visible} courseKey={modal.key} handleOk={handleOk} handleCancel={handleCancel} />
     </div>
   );
   

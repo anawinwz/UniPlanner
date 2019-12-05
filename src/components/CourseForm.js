@@ -4,7 +4,28 @@ import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Ch
 import moment from 'moment';
 const { Option } = Select;
 
-const CourseForm = forwardRef(({form}, ref) => {
+const transform = obj => {
+  let transformed = {};
+  if (!obj.sections) return transformed;
+
+  ['key', 'credits', 'name', 'required'].map(key => {
+    transformed[key] = Form.createFormField({
+      value: obj[key]
+    });
+  });
+  obj.sections.map((section, sIdx) => {
+    transformed[`sections[${sIdx}][key]`] = Form.createFormField({ value: section.key });
+    transformed[`sections[${sIdx}][name]`] = Form.createFormField({ value: section.name });
+    section.lects.map((lect, idx) => {
+      transformed[`sections[${sIdx}][lects][${idx}][dow]`] = Form.createFormField({ value: lect.dow });
+      transformed[`sections[${sIdx}][lects][${idx}][start]`] = Form.createFormField({ value: moment(lect.start, 'H:mm') });
+      transformed[`sections[${sIdx}][lects][${idx}][end]`] = Form.createFormField({ value: moment(lect.end, 'H:mm') });
+    });
+  });
+  return transformed;
+};
+
+const CourseForm = forwardRef(({form, fields}, ref) => {
   useImperativeHandle(ref, () => ({
     form,
   }));
@@ -20,9 +41,9 @@ const CourseForm = forwardRef(({form}, ref) => {
       sm: { span: 18 },
     },
   };
-  const [sections, setSections] = useState([
-    { lects: [{}] }
-  ]);
+  const [sections, setSections] = useState((typeof fields.sections !== 'undefined') ? fields.sections :
+    [{ lects: [{}] }]
+  );
 
   function addLect(sIdx) {
     const newSections = [...sections];
@@ -46,7 +67,7 @@ const CourseForm = forwardRef(({form}, ref) => {
     setSections(newSections);
   }
 
-  return <Form {...formItemLayout} colon={false} maskClosable={false}>
+  return <Form {...formItemLayout} colon={false}>
     <Form.Item label=" ">
       <Input.Group>
         {getFieldDecorator('key')(<Input style={{ width: '50%' }} placeholder="รหัสวิชา" />)}
@@ -63,7 +84,7 @@ const CourseForm = forwardRef(({form}, ref) => {
         ]})(<Input placeholder="ชื่อวิชา" />)}
     </Form.Item>
     <Form.Item label=" ">
-      {getFieldDecorator('required')(<Checkbox>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
+      {getFieldDecorator('required', { valuePropName: 'checked' })(<Checkbox>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 
@@ -152,14 +173,9 @@ const CourseForm = forwardRef(({form}, ref) => {
 export default (props) => {
   const WrappedCourseForm = Form.create({
     name: 'course_form',
-    // mapPropsToFields(props) {
-    //   return {
-    //     username: Form.createFormField({
-    //       ...props.username,
-    //       value: props.username.value,
-    //     }),
-    //   };
-    // },
+    mapPropsToFields(props) {
+      return transform(props.fields)
+    },
   })(CourseForm);
   return <WrappedCourseForm {...props}></WrappedCourseForm>
 }
