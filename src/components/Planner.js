@@ -68,7 +68,7 @@ export default (props) => {
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider>
+      <Sider collapsible collapsedWidth={0} breakpoint="lg">
         <p><small>บันทึกล่าสุด: {localStorage.lastUpdated || 'ไม่มี'}</small></p>
         <Courses />
       </Sider>
