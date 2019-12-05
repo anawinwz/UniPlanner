@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { Tree, Button, Icon } from 'antd';
+import { Tree, Button, Icon, Empty } from 'antd';
 import { planContext, courseContext } from '../contexts';
 
 import CourseModal from './CourseModal';
@@ -54,6 +54,7 @@ export default (props) => {
           </TreeNode>
         )}
       </Tree>
+      {courses.length === 0 && <Empty style={{marginTop: '10px'}} />}
       <CourseModal visible={modal.visible} courseKey={modal.key} handleOk={handleOk} handleCancel={handleCancel} />
     </div>
   );
