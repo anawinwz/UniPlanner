@@ -40,7 +40,7 @@ export default (props) => {
 
   return (
     <div>
-      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button>
+      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button> <Button type="danger" title="รีเซ็ต (เร็วๆ นี้)" disabled><Icon type="undo" /></Button>
       <Tree
         checkable
         checkedKeys={selectedPlan.courses}

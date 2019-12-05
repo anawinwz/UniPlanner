@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import Main from './pages/Main';
@@ -29,10 +30,12 @@ function App() {
   })
 
   useEffect(() => {
-      localStorage.setItem('plans', JSON.stringify(plan.plans));
+    localStorage.setItem('plans', JSON.stringify(plan.plans));
+    localStorage.setItem('lastUpdated', moment().format('D MMM YY H:mm:ss'));
   }, [plan]);
   useEffect(() => {
     localStorage.setItem('courses', JSON.stringify(course.courses));
+    localStorage.setItem('lastUpdated', moment().format('D MMM YY H:mm:ss'));
   }, [course]);
 
   return (

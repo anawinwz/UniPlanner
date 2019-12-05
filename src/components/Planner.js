@@ -68,7 +68,10 @@ export default (props) => {
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider><Courses /></Sider>
+      <Sider>
+        <p><small>บันทึกล่าสุด: {localStorage.lastUpdated || 'ไม่มี'}</small></p>
+        <Courses />
+      </Sider>
       <Content>
         <Tabs
           type="editable-card"
