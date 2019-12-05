@@ -46,7 +46,7 @@ const CourseForm = forwardRef(({form}, ref) => {
     setSections(newSections);
   }
 
-  return <Form {...formItemLayout} colon={false}>
+  return <Form {...formItemLayout} colon={false} maskClosable={false}>
     <Form.Item label=" ">
       <Input.Group>
         {getFieldDecorator('key')(<Input style={{ width: '50%' }} placeholder="รหัสวิชา" />)}
