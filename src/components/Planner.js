@@ -76,7 +76,8 @@ export default (props) => {
           type="editable-card"
           onEdit={onEdit}
           onChange={onChange}
-          activeKey={`${selected}`}>
+          activeKey={`${selected}`}
+          tabBarStyle={{margin: 0}}>
           {plans.map((plan, idx) => {
             const filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
                                             .filter(course => course.sections.length > 0)
@@ -93,7 +94,7 @@ export default (props) => {
               });
             })});
             return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-              <Timetable hoursInterval={[8,20]} events={events} />
+              <Timetable hoursInterval={[8,20]} timeLabel="เวลา" events={events} />
               <CourseTable filteredCourses={filteredCourses} />
             </TabPane>
           })}
