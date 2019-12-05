@@ -29,7 +29,6 @@ export default (props) => {
   const selectedPlan = plans[selectedIdx];
 
   function onSelect(selectedKeys, info) {
-    console.log('selected', selectedKeys, info);
     if (selectedKeys.length === 1) showEditModal(selectedKeys[0].split('_')[0]);
   }
 

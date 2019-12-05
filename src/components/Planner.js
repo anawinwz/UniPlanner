@@ -10,8 +10,6 @@ import moment from 'moment';
 const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
-// const operations = <Button>เพิ่ม Plan</Button>;
-
 export default (props) => {
   const [newIdx, setNewIdx] = useState(1);
   const { selected, plans, updatePlan } = useContext(planContext);
@@ -86,6 +84,7 @@ export default (props) => {
               lect.dow.map(dow => {
                 if (typeof events[dow] === 'undefined') events[dow] = [];
                 events[dow].push({
+                  id: `${course.key}_${course.sections[0].key}`,
                   name: `${course.key} ${course.name} หมู่ ${course.sections[0].name}`,
                   type: 'custom',
                   startTime: moment(lect.start, 'H:mm'),
