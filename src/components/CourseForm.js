@@ -41,7 +41,8 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
       sm: { span: 18 },
     },
   };
-  const [sections, setSections] = useState((typeof fields.sections !== 'undefined') ? fields.sections :
+  const isEdit = typeof fields.sections !== 'undefined';
+  const [sections, setSections] = useState((isEdit) ? fields.sections :
     [{ lects: [{}] }]
   );
 
@@ -70,7 +71,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
   return <Form {...formItemLayout} colon={false}>
     <Form.Item label=" ">
       <Input.Group>
-        {getFieldDecorator('key')(<Input style={{ width: '50%' }} placeholder="รหัสวิชา" />)}
+        {getFieldDecorator('key')(<Input style={{ width: '50%' }} placeholder="รหัสวิชา" disabled={isEdit} />)}
         {getFieldDecorator('credits')(<InputNumber style={{ width: '50%' }} placeholder="หน่วยกิต" min={1} max={25} />)}
       </Input.Group>
     </Form.Item>
@@ -90,6 +91,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     {sections.map((section, sIdx) => 
       <div>
         <Form.Item label="ชื่อแทนหมู่เรียน">
+          {getFieldDecorator(`sections[${sIdx}][key]`)}
           {getFieldDecorator(`sections[${sIdx}][name]`)(<Input placeholder={`${sIdx+1}`} />)}
           {section.lects.map((lect, lectIdx) => {
             return <Card size="small" actions={
