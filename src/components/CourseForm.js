@@ -71,12 +71,35 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
   }
   const injectedProps = {};
   const injectedOptions = {onChange: (e) => setFieldsValue({isChanged: {value: true}})};
-  const disabledHours = () => [1, 2, 3, 4, 5, 6, 7, 22, 23];
-  const timePickerOptions = {disabledHours: disabledHours, minuteStep: 5, format: "H:mm", hideDisabledOptions: true};
   const styles = {
     timePickerInline: {margin: 0, display: 'inline-block', width: 'calc(50% - 12px)'},
     halfWidth: {width: '50%'}
   };
+
+  const timePickerOptions = {minuteStep: 5, format: "H:mm", hideDisabledOptions: true};
+
+  const disabledHours = [1, 2, 3, 4, 5, 6, 7, 22, 23];
+  const disabledStartHours = () => disabledHours;
+  const disabledEndHours = start => {
+    let ret = [...disabledHours];
+    if (typeof start !== 'object') return ret;
+    for (let i = 0; i < start.hour(); i++){
+      ret.push(i);
+    }
+    return ret;
+  };
+  const disabledEndMinutes = (start, selectedHour) => {
+    let ret = [];
+    if (typeof start !== 'object') return ret;
+
+    if (selectedHour === start.hour()) {
+      for (let i = 0; i <= start.minute(); i+=5){
+        ret.push(i);
+      }
+    }
+    return ret;
+  }
+
   const getNextHour = obj => {
     if (typeof obj !== 'object') return obj;
     return moment(obj).add(1, 'hours');
@@ -111,6 +134,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
           {getFieldDecorator(`sections[${sIdx}][key]`, injectedOptions)}
           {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
           {section.lects.map((lect, lectIdx) => {
+            const startTime = getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`);
             return <Card size="small" actions={
               (section.lects.length === 1 || section.lects.length - 1 !== lectIdx) ? [] : 
               [
@@ -154,7 +178,12 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                       message: 'ต้องระบุเวลาเริ่มเรียน'
                     }
                   ], ...injectedOptions
-                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={moment('9:00')} placeholder="เวลาเริ่ม" />)}
+                })(<TimePicker
+                    {...injectedProps}
+                    {...timePickerOptions}
+                    disabledHours={disabledStartHours}
+                    defaultOpenValue={moment('9:00')}
+                    placeholder="เวลาเริ่ม" />)}
                 </Form.Item>
                 <Form.Item style={styles.timePickerInline}>
                 {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][end]`, {
@@ -165,7 +194,13 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                       message: 'ต้องระบุเวลาเลิกเรียน'
                     }
                   ], ...injectedOptions
-                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={getNextHour(getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`))} placeholder="เวลาเลิก"  />)}
+                })(<TimePicker
+                    {...injectedProps}
+                    {...timePickerOptions}
+                    disabledHours={() => disabledEndHours(startTime)}
+                    disabledMinutes={(selectedHour) => disabledEndMinutes(startTime, selectedHour)}
+                    defaultOpenValue={getNextHour(startTime)}
+                    placeholder="เวลาเลิก" />)}
                 </Form.Item>
               </Input.Group>
             </Card>
