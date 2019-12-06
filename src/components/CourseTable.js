@@ -41,7 +41,7 @@ export default (props) => {
   ]
   const tableFooter = pageData => {
     if (pageData.length === 0) return <span></span>;
-    return <span>หน่วยกิตรวม: {pageData.reduce((previous, current) => (previous.credits || previous) + (current.credits || 0))}</span>
+    return <span>หน่วยกิตรวม: {pageData.reduce((previous, current) => previous + parseInt(current.credits || 0), 0)}</span>
   }
   return <Table size="small" dataSource={props.filteredCourses} columns={columns} footer={tableFooter} rowKey="key" pagination={false} />
 };
