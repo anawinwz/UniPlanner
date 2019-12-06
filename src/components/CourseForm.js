@@ -77,6 +77,10 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     timePickerInline: {margin: 0, display: 'inline-block', width: 'calc(50% - 12px)'},
     halfWidth: {width: '50%'}
   };
+  const getNextHour = obj => {
+    if (typeof obj !== 'object') return obj;
+    return moment(obj).add(1, 'hours');
+  };
 
   return <Form {...formItemLayout} colon={false}>
     {getFieldDecorator('isChanged', { initialValues: false })}
@@ -161,7 +165,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                       message: 'ต้องระบุเวลาเลิกเรียน'
                     }
                   ], ...injectedOptions
-                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`)} placeholder="เวลาเลิก"  />)}
+                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={getNextHour(getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`))} placeholder="เวลาเลิก"  />)}
                 </Form.Item>
               </Input.Group>
             </Card>
