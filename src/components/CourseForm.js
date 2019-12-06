@@ -10,7 +10,8 @@ const transform = obj => {
   let transformed = {};
   if (!obj.sections) return transformed;
 
-  ['key', 'credits', 'name', 'required'].map(key => {
+  ['key', 'code', 'credits', 'name', 'required'].map(key => {
+    if (typeof obj[key] === 'undefined') return;
     transformed[key] = Form.createFormField({
       value: obj[key]
     });
@@ -106,10 +107,11 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
   };
 
   return <Form {...formItemLayout} colon={false}>
-    {getFieldDecorator('isChanged', { initialValues: false })}
+    {getFieldDecorator('isChanged', { initialValue: false })}
+    {getFieldDecorator('key')}
     <Form.Item label=" ">
       <Input.Group>
-        {getFieldDecorator('key', injectedOptions)(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" disabled={isEdit} maxLength={10} />)}
+        {getFieldDecorator('code', injectedOptions)(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" maxLength={10} />)}
         {getFieldDecorator('credits', injectedOptions)(<InputNumber {...injectedProps} style={styles.halfWidth} placeholder="หน่วยกิต" min={1} max={25} />)}
       </Input.Group>
     </Form.Item>
@@ -131,7 +133,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     {sections.map((section, sIdx) => 
       <div>
         <Form.Item label="ชื่อแทนหมู่เรียน">
-          {getFieldDecorator(`sections[${sIdx}][key]`, injectedOptions)}
+          {getFieldDecorator(`sections[${sIdx}][key]`)}
           {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
           {section.lects.map((lect, lectIdx) => {
             const startTime = getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`);

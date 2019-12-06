@@ -25,10 +25,10 @@ export default (props) => {
       }
 
       delete values.isChanged;
-      if (!values.key) values.key = values.name;
+      if (!values.key) values.key = require('randomkey')(6);
       values.sections = values.sections.map((section, idx) => {
         if (!section.name) section.name = idx + 1;
-        section.key = section.name;
+        section.key = require('randomkey')(6);
         section.lects = section.lects.map(lect => {
           lect.start = lect.start.format('H:mm');
           lect.end = lect.end.format('H:mm');

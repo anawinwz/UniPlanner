@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import prompt from 'antd-prompt';
 import { Tabs, Modal, Layout } from 'antd';
 
 import { planContext, courseContext } from '../contexts';
@@ -11,7 +12,6 @@ const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
 export default (props) => {
-  const [newIdx, setNewIdx] = useState(1);
   const { selected, plans, updatePlan } = useContext(planContext);
   const { courses } = useContext(courseContext);
 
@@ -20,13 +20,28 @@ export default (props) => {
   }
 
   const actions = {
-    add: () => {
-      const activeKey = `plan${newIdx}`
-      updatePlan({
-        selected: activeKey,
-        plans: [...plans, {name: `แผน ${newIdx}`, courses: courses.filter(course => course.required && course.sections.length === 1).map(course => course.key+'_'+course.sections[0].key), key: activeKey}]
-      })
-      setNewIdx(newIdx => newIdx + 1)
+    add: async () => {
+      const activeKey = require('randomkey')(6)
+      
+      try {
+        const planName = await prompt({
+          title: 'สร้างแผนใหม่',
+          placeholder: 'ชื่อแผน',
+          rules: [
+            { required: true, message: 'กรุณากรอกชื่อแผนที่ต้องการสร้าง' }
+          ],
+          modalProps: {
+            okText: 'สร้าง'
+          }
+        })
+        updatePlan({
+          selected: activeKey,
+          plans: [...plans, {name: planName, courses: courses.filter(course => course.required && course.sections.length === 1).map(course => course.key+'_'+course.sections[0].key), key: activeKey}]
+        })
+      } catch (err) {
+
+      }
+      
     },
     remove: targetKey => {
       const target = plans.find(plan => plan.key === targetKey);
@@ -88,7 +103,7 @@ export default (props) => {
                 if (typeof events[dow] === 'undefined') events[dow] = [];
                 events[dow].push({
                   id: `${course.key}_${course.sections[0].key}`,
-                  name: `${course.key} ${course.name} หมู่ ${course.sections[0].name}`,
+                  name: `${course.code} ${course.name} หมู่ ${course.sections[0].name}`,
                   type: 'custom',
                   startTime: moment(lect.start, 'H:mm'),
                   endTime: moment(lect.end, 'H:mm')
