@@ -1,7 +1,9 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
-
-import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox, Card, Popconfirm } from 'antd';
 import moment from 'moment';
+
+import { isNonEmpty } from '../utils/check';
+import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox, Card, Popconfirm } from 'antd';
+
 const { Option } = Select;
 
 const transform = obj => {
@@ -30,7 +32,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     form,
   }));
 
-  const { getFieldDecorator } = form;
+  const { getFieldDecorator, getFieldsValue } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -97,6 +99,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
             return <Card size="small" actions={
               (section.lects.length === 1 || section.lects.length - 1 !== lectIdx) ? [] : 
               [
+                isNonEmpty(getFieldsValue([`sections[${sIdx}][lects][${lectIdx}][dow]`, `sections[${sIdx}][lects][${lectIdx}][start]`, `sections[${sIdx}][lects][${lectIdx}][end]`])) ? 
                 <Popconfirm
                   title="ต้องการลบชุดเวลาเรียนนี้หรือไม่?"
                   onConfirm={() => removeLastLect(sIdx)}
@@ -104,7 +107,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                   cancelText="ไม่"
                 >
                   <Icon type="delete" key="delete" />
-                </Popconfirm>
+                </Popconfirm> : <Icon type="delete" key="delete" onClick={() => removeLastLect(sIdx)} />
               ]
             }>
               <Form.Item style={{margin: 0}}>
@@ -158,14 +161,18 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     )}
     
     <Button type="dashed" ghost style={{width: '50%'}} onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
-    {sections.length > 1 && <Popconfirm
-      title="ต้องการลบหมู่เรียนล่าสุดหรือไม่?"
-      onConfirm={removeLastSection}
-      okText="ลบ"
-      cancelText="ไม่"
-    >
-      <Button type="dashed" ghost style={{width: '50%'}}><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
-    </Popconfirm>}
+    {sections.length > 1 && (
+      (isNonEmpty(getFieldsValue([`sections[${sections.length-1}][name]`, `sections[${sections.length-1}][lects][0][dow]`, `sections[${sections.length-1}][lects][0][start]`, , `sections[${sections.length-1}][lects][0][end]`])) && <Popconfirm
+        title="ต้องการลบหมู่เรียนล่าสุดหรือไม่?"
+        onConfirm={removeLastSection}
+        okText="ลบ"
+        cancelText="ไม่"
+      >
+        <Button type="dashed" ghost style={{width: '50%'}}><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
+      </Popconfirm>) ||
+        <Button type="dashed" ghost style={{width: '50%'}} onClick={removeLastSection}><Icon type="minus" /> ลบหมู่เรียนล่าสุด</Button>
+      )
+    }
 
     
     

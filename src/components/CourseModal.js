@@ -1,6 +1,8 @@
 import React, { useContext, createRef } from 'react';
 
 import { Modal, Popconfirm, Button, Icon } from 'antd';
+
+import { isNonEmpty } from '../utils/check';
 import { courseContext } from '../contexts';
 import CourseForm from './CourseForm';
 
@@ -47,8 +49,6 @@ export default (props) => {
   function handleCancel() {
     const { form } = formRef.current;
     const values = form.getFieldsValue()
-
-    const isNonEmpty = obj => Object.values(obj).some(value => (typeof value !== 'undefined' && typeof value !== 'object') || (typeof value === 'object' && isNonEmpty(value)));
 
     if (isNonEmpty(values)) {
       Modal.confirm({
