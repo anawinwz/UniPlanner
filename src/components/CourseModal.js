@@ -8,7 +8,6 @@ import CourseForm from './CourseForm';
 
 export default (props) => {
   const { courses, updateCourse } = useContext(courseContext);
-  const [isChanged, setIsChanged] = useState(false);
   
   const mode = (props.courseKey) ? 'edit' : 'add';
   let targetIdx, targetInfo
@@ -25,6 +24,7 @@ export default (props) => {
         return;
       }
 
+      delete values.isChanged;
       if (!values.key) values.key = values.name;
       values.sections = values.sections.map((section, idx) => {
         if (!section.name) section.name = idx + 1;
@@ -45,7 +45,6 @@ export default (props) => {
         updateCourse({ courses: [...courses, values] });
       }
 
-      setIsChanged(false);
       if (typeof props.handleOk === 'function') props.handleOk();
     });
   }
@@ -53,19 +52,17 @@ export default (props) => {
     const { form } = formRef.current;
     const values = form.getFieldsValue()
 
-    if ((mode !== 'edit' || isChanged) && isNonEmpty(values)) {
+    if ((mode !== 'edit' || values.isChanged) && isNonEmpty(values)) {
       Modal.confirm({
         title: 'ยืนยันการยกเลิก',
         content: `คุณแน่ใจหรือว่าต้องการยกเลิกความเปลี่ยนแปลง?`,
         onOk() {
-          setIsChanged(false);
           if (typeof props.handleCancel === 'function') props.handleCancel();
         },
         okText: 'ใช่',
         cancelText: 'ไม่'
       });
     } else {
-      setIsChanged(false);
       if (typeof props.handleCancel === 'function') props.handleCancel();
     }
   }
@@ -100,6 +97,6 @@ export default (props) => {
     ]}
     onCancel={handleCancel}
   >
-    <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} onChange={() => setIsChanged(true)} />
+    <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} />
   </Modal>
 };

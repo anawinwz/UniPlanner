@@ -27,12 +27,12 @@ const transform = obj => {
   return transformed;
 };
 
-const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
+const CourseForm = forwardRef(({form, fields}, ref) => {
   useImperativeHandle(ref, () => ({
     form,
   }));
 
-  const { getFieldDecorator, getFieldsValue } = form;
+  const { getFieldDecorator, getFieldsValue, getFieldValue, setFieldsValue } = form;
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -69,17 +69,21 @@ const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
     newSections.pop();
     setSections(newSections);
   }
-  const injectedProps = {onChange: onChange};
+  const injectedProps = {};
+  const injectedOptions = {onChange: (e) => setFieldsValue({isChanged: {value: true}})};
+  const disabledHours = () => [1, 2, 3, 4, 5, 6, 7, 22, 23];
+  const timePickerOptions = {disabledHours: disabledHours, minuteStep: 5, format: "H:mm", hideDisabledOptions: true};
   const styles = {
     timePickerInline: {margin: 0, display: 'inline-block', width: 'calc(50% - 12px)'},
     halfWidth: {width: '50%'}
   };
 
   return <Form {...formItemLayout} colon={false}>
+    {getFieldDecorator('isChanged', { initialValues: false })}
     <Form.Item label=" ">
       <Input.Group>
-        {getFieldDecorator('key')(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" disabled={isEdit} />)}
-        {getFieldDecorator('credits')(<InputNumber {...injectedProps} style={styles.halfWidth} placeholder="หน่วยกิต" min={1} max={25} />)}
+        {getFieldDecorator('key', injectedOptions)(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" disabled={isEdit} maxLength={10} />)}
+        {getFieldDecorator('credits', injectedOptions)(<InputNumber {...injectedProps} style={styles.halfWidth} placeholder="หน่วยกิต" min={1} max={25} />)}
       </Input.Group>
     </Form.Item>
     <Form.Item label="ชื่อวิชา">
@@ -89,17 +93,19 @@ const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
             required: true,
             message: 'ต้องระบุชื่อวิชา',
           }
-        ]})(<Input {...injectedProps} placeholder="ชื่อวิชา" />)}
+        ],
+        ...injectedOptions
+      })(<Input {...injectedProps} placeholder="ชื่อวิชา" />)}
     </Form.Item>
     <Form.Item label=" ">
-      {getFieldDecorator('required', { valuePropName: 'checked' })(<Checkbox {...injectedProps}>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
+      {getFieldDecorator('required', { valuePropName: 'checked', ...injectedOptions})(<Checkbox {...injectedProps}>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 
       <div>
         <Form.Item label="ชื่อแทนหมู่เรียน">
-          {getFieldDecorator(`sections[${sIdx}][key]`)}
-          {getFieldDecorator(`sections[${sIdx}][name]`)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
+          {getFieldDecorator(`sections[${sIdx}][key]`, injectedOptions)}
+          {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
           {section.lects.map((lect, lectIdx) => {
             return <Card size="small" actions={
               (section.lects.length === 1 || section.lects.length - 1 !== lectIdx) ? [] : 
@@ -122,7 +128,7 @@ const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
                       required: true,
                       message: 'ต้องระบุวันเรียนในสัปดาห์'
                     }
-                  ]
+                  ], ...injectedOptions
                 })(
                 <Select {...injectedProps} mode="multiple" placeholder={`วันเรียนในสัปดาห์`}>
                     <Option key="M">จันทร์</Option>
@@ -143,8 +149,8 @@ const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
                       required: true,
                       message: 'ต้องระบุเวลาเริ่มเรียน'
                     }
-                  ]
-                })(<TimePicker {...injectedProps} format="H:mm" minuteStep={5} defaultOpenValue={moment('9:00')} placeholder="เวลาเริ่ม" />)}
+                  ], ...injectedOptions
+                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={moment('9:00')} placeholder="เวลาเริ่ม" />)}
                 </Form.Item>
                 <Form.Item style={styles.timePickerInline}>
                 {getFieldDecorator(`sections[${sIdx}][lects][${lectIdx}][end]`, {
@@ -154,8 +160,8 @@ const CourseForm = forwardRef(({form, fields, onChange}, ref) => {
                       required: true,
                       message: 'ต้องระบุเวลาเลิกเรียน'
                     }
-                  ]
-                })(<TimePicker {...injectedProps} format="H:mm" minuteStep={5} placeholder="เวลาเลิก"  />)}
+                  ], ...injectedOptions
+                })(<TimePicker {...injectedProps} {...timePickerOptions} defaultOpenValue={getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`)} placeholder="เวลาเลิก"  />)}
                 </Form.Item>
               </Input.Group>
             </Card>
