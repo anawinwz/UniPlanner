@@ -9,7 +9,6 @@ const { TreeNode } = Tree;
 
 export default (props) => {
   const [ modal, setModal ] = useState({ visible: false, key: null });
-
   
   const { courses } = useContext(courseContext);
   function showAddModal() { showEditModal(); }
@@ -38,19 +37,25 @@ export default (props) => {
     updatePlan({ plans });
   }
 
+  const wrappedTitle = {width: '100%', margin: '0', textOverflow: 'ellipsis', overflowX: 'hidden', whiteSpace: 'no-wrap'};
+
   return (
     <div>
       <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button> <Button type="danger" title="รีเซ็ต (เร็วๆ นี้)" disabled><Icon type="undo" /></Button>
       <Tree
         checkable
         checkedKeys={selectedPlan.courses}
+        selectedKeys={[]}
         onSelect={onSelect}
         onCheck={onCheck}
         style={{textAlign: 'left'}}
       >
         {courses.map(course => 
-          <TreeNode title={course.name+((course.required)?'**':'')} key={course.key} expanded={course.sections.length > 1}>
-            {course.sections.map(section => <TreeNode title={`หมู่เรียน ${section.name}`} key={`${course.key}_${section.key}`} />)}
+          <TreeNode 
+            title={<div title={course.name} style={wrappedTitle}>{course.required ? '**':''}{course.name}</div>}
+            key={course.key}
+            expanded={course.sections.length > 1}>
+              {course.sections.map(section => <TreeNode title={`หมู่เรียน ${section.name}`} key={`${course.key}_${section.key}`} />)}
           </TreeNode>
         )}
       </Tree>

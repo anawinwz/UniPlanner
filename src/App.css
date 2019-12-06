@@ -30,3 +30,11 @@ td > p:last-child {
   color: #7d7d7d;
   border-color: #7d7d7d;
 }
+
+.ant-tree-node-content-wrapper {
+  width: calc(100% - 40px);
+}
+
+.ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background-color: #004063;
+}

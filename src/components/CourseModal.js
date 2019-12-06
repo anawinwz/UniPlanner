@@ -1,4 +1,4 @@
-import React, { useContext, createRef } from 'react';
+import React, { useContext, createRef, useState } from 'react';
 
 import { Modal, Popconfirm, Button, Icon } from 'antd';
 
@@ -8,6 +8,7 @@ import CourseForm from './CourseForm';
 
 export default (props) => {
   const { courses, updateCourse } = useContext(courseContext);
+  const [isChanged, setIsChanged] = useState(false);
   
   const mode = (props.courseKey) ? 'edit' : 'add';
   let targetIdx, targetInfo
@@ -43,6 +44,8 @@ export default (props) => {
       } else {
         updateCourse({ courses: [...courses, values] });
       }
+
+      setIsChanged(false);
       if (typeof props.handleOk === 'function') props.handleOk();
     });
   }
@@ -50,17 +53,21 @@ export default (props) => {
     const { form } = formRef.current;
     const values = form.getFieldsValue()
 
-    if (isNonEmpty(values)) {
+    if ((mode !== 'edit' || isChanged) && isNonEmpty(values)) {
       Modal.confirm({
         title: 'ยืนยันการยกเลิก',
         content: `คุณแน่ใจหรือว่าต้องการยกเลิกความเปลี่ยนแปลง?`,
         onOk() {
+          setIsChanged(false);
           if (typeof props.handleCancel === 'function') props.handleCancel();
         },
         okText: 'ใช่',
         cancelText: 'ไม่'
       });
-    } else if (typeof props.handleCancel === 'function') props.handleCancel();
+    } else {
+      setIsChanged(false);
+      if (typeof props.handleCancel === 'function') props.handleCancel();
+    }
   }
   function removeThisCourse() {
     if (mode !== 'edit') return;
@@ -93,6 +100,6 @@ export default (props) => {
     ]}
     onCancel={handleCancel}
   >
-    <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} />
+    <CourseForm wrappedComponentRef={formRef} fields={(mode === 'edit') ? targetInfo : {}} onChange={() => setIsChanged(true)} />
   </Modal>
 };
