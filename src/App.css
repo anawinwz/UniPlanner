@@ -1,3 +1,7 @@
+* {
+  font-family: 'Bai Jamjuree', sans-serif;
+}
+
 .editable-cell {
   position: relative;
 }
