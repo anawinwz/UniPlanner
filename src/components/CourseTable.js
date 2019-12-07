@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Table, Tag, Input } from 'antd';
+import { Table, Tag } from 'antd';
 
 export default (props) => {
 
