@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import prompt from 'antd-prompt';
-import { Tabs, Modal, message } from 'antd';
+import { Tabs, Modal, message, Icon } from 'antd';
 
 import { planContext, courseContext } from '../contexts';
 import CourseTable from './CourseTable';
@@ -26,9 +26,10 @@ export default (props) => {
       try {
         const planName = await prompt({
           title: 'สร้างแผนใหม่',
-          placeholder: 'ชื่อแผน',
+          placeholder: 'ชื่อแผน (ยาวไม่เกิน 12 ตัว)',
           rules: [
-            { required: true, message: 'กรุณากรอกชื่อแผนที่ต้องการสร้าง' }
+            { required: true, message: 'กรุณากรอกชื่อแผนที่ต้องการสร้าง' },
+            { max: 12, message: 'ชื่อแผนไม่ควรยาวเกิน 12 ตัว' }
           ],
           modalProps: {
             okText: 'สร้าง'
@@ -95,6 +96,9 @@ export default (props) => {
         title: 'แก้ไขชื่อแผน',
         placeholder: plan.name,
         value: plan.name,
+        rules: [
+          { max: 12, message: 'ชื่อแผนไม่ควรยาวเกิน 12 ตัว' }
+        ],
         modalProps: {
           okText: 'แก้ไข'
         }
@@ -122,10 +126,16 @@ export default (props) => {
       tabBarStyle={{margin: 0}}
       onTabClick={onTabClick}>
       {plans.map((plan, idx) => {
-        return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-          <TimeTable filteredCourses={filteredCourses} />
-          <CourseTable filteredCourses={filteredCourses} />
-        </TabPane>
+        return (
+          <TabPane 
+            key={plan.key}
+            tab={plan.key === selected ? <span title="คลิกเพื่อแก้ไขชื่อแผน">{plan.name} <Icon type="edit"/></span> : plan.name}
+            closable={plans.length > 1}
+          >
+            <TimeTable filteredCourses={filteredCourses} />
+            <CourseTable filteredCourses={filteredCourses} />
+          </TabPane>
+        )
       })}
     </Tabs>
   )
