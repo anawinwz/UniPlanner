@@ -1,14 +1,11 @@
 import React, { useContext } from 'react';
 import prompt from 'antd-prompt';
-import { Tabs, Modal, Layout, message } from 'antd';
+import { Tabs, Modal, message } from 'antd';
 
 import { planContext, courseContext } from '../contexts';
-import Courses from '../components/Courses';
 import CourseTable from './CourseTable';
-import Timetable from 'react-timetable-events'
-import moment from 'moment';
+import TimeTable from './TimeTable';
 
-const { Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
 export default (props) => {
@@ -113,57 +110,23 @@ export default (props) => {
     }
   }
 
-  let filteredCourses;
-  let events;
-
-  const createCourseList = () => {
-    filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
-                                    .filter(course => course.sections.length > 0)
-    events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
-    filteredCourses.map(course => { course.sections[0].lects.map(lect => {
-      lect.dow.map(dow => {
-        if (typeof events[dow] === 'undefined') events[dow] = [];
-        events[dow].push({
-          id: `${course.key}_${course.sections[0].key}`,
-          name: `${course.code || ''} ${course.name} หมู่ ${course.sections[0].name}`,
-          type: 'custom',
-          startTime: moment(lect.start, 'H:mm'),
-          endTime: moment(lect.end, 'H:mm')
-        });
-      });
-    })});
-  };
-
-  createCourseList();
+  const filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
+                                .filter(course => course.sections.length > 0);
   
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsedWidth={0} breakpoint="lg">
-        <h1>
-          UniPlanner<br/>
-          <small><a href="https://github.com/anawinwz/" target="_blank">@AnawinWz</a></small>
-        </h1>
-        <p><small>บันทึกล่าสุด: {localStorage.lastUpdated || 'ไม่มี'}</small></p>
-        <Courses />
-      </Sider>
-      <Content>
-        <Tabs
-          type="editable-card"
-          onEdit={onEdit}
-          onChange={onChange}
-          activeKey={`${selected}`}
-          tabBarStyle={{margin: 0}}
-          onTabClick={onTabClick}>
-          {plans.map((plan, idx) => {
-            return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
-              <Timetable hoursInterval={[8,20]} timeLabel="เวลา" events={events} />
-              <CourseTable filteredCourses={filteredCourses} />
-            </TabPane>
-          })}
-        </Tabs>
-        
-      </Content>
-    </Layout>
-  
+    <Tabs
+      type="editable-card"
+      onEdit={onEdit}
+      onChange={onChange}
+      activeKey={`${selected}`}
+      tabBarStyle={{margin: 0}}
+      onTabClick={onTabClick}>
+      {plans.map((plan, idx) => {
+        return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
+          <TimeTable filteredCourses={filteredCourses} />
+          <CourseTable filteredCourses={filteredCourses} />
+        </TabPane>
+      })}
+    </Tabs>
   )
 }
