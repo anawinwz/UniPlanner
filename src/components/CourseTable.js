@@ -16,20 +16,17 @@ export default (props) => {
       default: return <Tag key={dow}>{dow}</Tag>
     }
   };
+  
+  const notSpecified = (text) => !text ? <i style={{color: 'gray'}}>ไม่ระบุ</i> : text;
 
   const columns = [
-    { title: 'รหัสวิชา', dataIndex: 'key', width: '15%' },
+    { title: 'รหัสวิชา', dataIndex: 'code', width: '15%', render: notSpecified },
     { title: 'ชื่อวิชา', dataIndex: 'name', width: '20%',
       render(text, record, index) {
         return <span>{text} {record.required && <Tag color="#f50">บังคับ</Tag>}</span>
       }
     },
-    { title: 'หน่วยกิต', dataIndex: 'credits', width: '10%',
-      render(text, record, index) {
-        if (!text) return <i style={{color: 'gray'}}>ไม่ระบุ</i>;
-        return text;
-      }
-    },
+    { title: 'หน่วยกิต', dataIndex: 'credits', width: '10%', render: notSpecified },
     { title: 'หมู่เรียน', dataIndex: 'sections[0].name', width: '15%'},
     {
       title: 'เวลาเรียน',
@@ -40,7 +37,7 @@ export default (props) => {
     {
       title: 'หมายเหตุ',
       render(text, record, index) {
-        return <Input />
+        return <Input disabled title="เร็ว ๆ นี้" />
       }
     }
   ]
