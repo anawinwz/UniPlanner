@@ -88,6 +88,7 @@ export default (props) => {
   }
 
   return <Modal
+    centered
     title={mode === 'edit' ? `แก้ไขข้อมูลรายวิชา` : `เพิ่มข้อมูลรายวิชา`}
     visible={props.visible}
     footer={[
