@@ -5,8 +5,6 @@ import { planContext, courseContext } from '../contexts';
 
 import CourseModal from './CourseModal';
 
-const { TreeNode } = Tree;
-
 export default (props) => {
   const [ modal, setModal ] = useState({ visible: false, key: null });
   
@@ -49,16 +47,18 @@ export default (props) => {
         onSelect={onSelect}
         onCheck={onCheck}
         style={{textAlign: 'left'}}
-      >
-        {courses.map(course => 
-          <TreeNode 
-            title={<div title={course.name} style={wrappedTitle}>{course.required ? '**':''}{course.name}</div>}
-            key={course.key}
-            expanded={course.sections.length > 1}>
-              {course.sections.map(section => <TreeNode title={`หมู่เรียน ${section.name}`} key={`${course.key}_${section.key}`} />)}
-          </TreeNode>
-        )}
-      </Tree>
+        treeData={
+          courses.map(course => ({
+            title: <div title={course.name} style={wrappedTitle}>{course.required ? '**':''}{course.name}</div>,
+            key: course.key,
+            expanded: course.sections.length > 1,
+            children: course.sections.map(section => ({
+              title: `หมู่เรียน ${section.name}`,
+              key: `${course.key}_${section.key}`
+            }))
+          }))
+        }
+      />
       {courses.length === 0 && <Empty style={{marginTop: '10px'}} />}
       <CourseModal visible={modal.visible} courseKey={modal.key} handleOk={handleOk} handleCancel={handleCancel} />
     </div>

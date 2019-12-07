@@ -1,4 +1,4 @@
-import React, { useContext, createRef, useState } from 'react';
+import React, { useContext, createRef } from 'react';
 
 import { Modal, Popconfirm, Button, Icon } from 'antd';
 
@@ -70,7 +70,7 @@ export default (props) => {
     if (mode !== 'edit') return;
 
     const newCourses = [...courses];
-    delete newCourses[targetIdx];
+    newCourses.splice(targetIdx, 1);
     updateCourse({ courses: newCourses });
     if (typeof props.handleCancel === 'function') props.handleCancel();
   }
