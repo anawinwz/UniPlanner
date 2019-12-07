@@ -80,10 +80,11 @@ export default (props) => {
     actions[action](targetKey);
   }
 
-  const plan = plans.find(plan => plan.key === selected);
   let filteredCourses;
   let events;
 
+  const createCourseList = () => {
+    const plan = plans.find(plan => plan.key === selected);
     filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
                                     .filter(course => course.sections.length > 0)
     events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
@@ -99,6 +100,9 @@ export default (props) => {
         });
       });
     })});
+  };
+
+  createCourseList();
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
