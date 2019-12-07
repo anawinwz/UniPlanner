@@ -101,8 +101,8 @@ export default (props) => {
 
   return (
     <div>
-      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button> 
-      
+      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button>
+      &nbsp;
       <Dropdown overlay={resetMenu}>
         <Button type="danger" title="ลบ/เคลียร์ข้อมูล"><Icon type="delete" /><Icon type="down" /></Button>
       </Dropdown>

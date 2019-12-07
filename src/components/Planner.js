@@ -139,6 +139,10 @@ export default (props) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsedWidth={0} breakpoint="lg">
+        <h1>
+          UniPlanner<br/>
+          <small><a href="https://github.com/anawinwz/" target="_blank">@AnawinWz</a></small>
+        </h1>
         <p><small>บันทึกล่าสุด: {localStorage.lastUpdated || 'ไม่มี'}</small></p>
         <Courses />
       </Sider>
