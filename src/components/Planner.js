@@ -13,6 +13,9 @@ const { TabPane } = Tabs;
 
 export default (props) => {
   const { selected, plans, updatePlan } = useContext(planContext);
+  const planIdx = plans.findIndex(plan => plan.key === selected);
+  const plan = plans[planIdx];
+
   const { courses } = useContext(courseContext);
 
   function onChange(activeKey) {
@@ -79,12 +82,32 @@ export default (props) => {
   function onEdit(targetKey, action) {
     actions[action](targetKey);
   }
+  async function onTabClick(key) {
+    if (key !== selected) return;
+    try {
+      const planName = await prompt({
+        title: 'แก้ไขชื่อแผน',
+        placeholder: plan.name,
+        value: plan.name,
+        modalProps: {
+          okText: 'แก้ไข'
+        }
+      })
+      
+      if (!planName) planName = plan.name;
+
+      const newPlan = [...plans];
+      newPlan[planIdx].name = planName;
+      updatePlan({ plans: newPlan });
+    } catch (err) {
+
+    }
+  }
 
   let filteredCourses;
   let events;
 
   const createCourseList = () => {
-    const plan = plans.find(plan => plan.key === selected);
     filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
                                     .filter(course => course.sections.length > 0)
     events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
@@ -116,7 +139,8 @@ export default (props) => {
           onEdit={onEdit}
           onChange={onChange}
           activeKey={`${selected}`}
-          tabBarStyle={{margin: 0}}>
+          tabBarStyle={{margin: 0}}
+          onTabClick={onTabClick}>
           {plans.map((plan, idx) => {
             return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
               <Timetable hoursInterval={[8,20]} timeLabel="เวลา" events={events} />
