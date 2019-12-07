@@ -52,7 +52,7 @@ export default (props) => {
     const { form } = formRef.current;
     const values = form.getFieldsValue()
 
-    if ((mode !== 'edit' || values.isChanged) && isNonEmpty(values)) {
+    if (values.isChanged && isNonEmpty(values)) {
       Modal.confirm({
         title: 'ยืนยันการยกเลิก',
         content: `คุณแน่ใจหรือว่าต้องการยกเลิกความเปลี่ยนแปลง?`,
