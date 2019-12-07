@@ -1,13 +1,14 @@
 import React, { useContext, createRef } from 'react';
 
-import { Modal, Popconfirm, Button, Icon } from 'antd';
+import { Modal, Popconfirm, Button, Icon, message } from 'antd';
 
 import { isNonEmpty } from '../utils/check';
-import { courseContext } from '../contexts';
+import { courseContext, planContext } from '../contexts';
 import CourseForm from './CourseForm';
 
 export default (props) => {
   const { courses, updateCourse } = useContext(courseContext);
+  const { plans, updatePlan } = useContext(planContext);
   
   const mode = (props.courseKey) ? 'edit' : 'add';
   let targetIdx, targetInfo
@@ -42,6 +43,17 @@ export default (props) => {
         newCourses[targetIdx] = values;
         updateCourse({ courses: newCourses });
       } else {
+        if (values.required) {
+          if (values.sections.length > 1) {
+            message.info('วิชาบังคับนี้มีมากกว่า 1 หมู่เรียน โปรดจัดวางลงในแผนด้วยตนเอง', 4000);
+          } else {
+            const newPlans = [...plans];
+            plans.map((plan, idx) => {
+              newPlans[idx].courses.push(`${values.key}_${values.sections[0].key}`);
+            });
+            updatePlan({plans: newPlans});
+          }
+        }
         updateCourse({ courses: [...courses, values] });
       }
 

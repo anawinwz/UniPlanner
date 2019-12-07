@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import prompt from 'antd-prompt';
-import { Tabs, Modal, Layout } from 'antd';
+import { Tabs, Modal, Layout, message } from 'antd';
 
 import { planContext, courseContext } from '../contexts';
 import Courses from '../components/Courses';
@@ -37,10 +37,19 @@ export default (props) => {
             okText: 'สร้าง'
           }
         })
+        const requiredCourses = courses.filter(course => course.required);
+        const autoAddCourses = requiredCourses.filter(course => course.sections.length === 1).map(course => course.key+'_'+course.sections[0].key);
+
         updatePlan({
           selected: activeKey,
-          plans: [...plans, {name: planName, courses: courses.filter(course => course.required && course.sections.length === 1).map(course => course.key+'_'+course.sections[0].key), key: activeKey}]
+          plans: [...plans, {name: planName, courses: autoAddCourses, key: activeKey}]
         })
+
+        if (requiredCourses.length === 0 || requiredCourses.length === autoAddCourses.length) {
+          message.success(requiredCourses.length > 0 ? `สร้างแผนใหม่ที่มี ${requiredCourses.length} วิชาบังคับสำเร็จ` : `สร้างแผนใหม่สำเร็จ`);
+        } else {
+          message.info(`มี ${requiredCourses.length - autoAddCourses.length} วิชาบังคับที่มีมากกว่า 1 หมู่เรียน โปรดจัดวางด้วยตนเองอีกครั้ง`);
+        }
       } catch (err) {
 
       }
@@ -85,7 +94,7 @@ export default (props) => {
   async function onTabClick(key) {
     if (key !== selected) return;
     try {
-      const planName = await prompt({
+      let planName = await prompt({
         title: 'แก้ไขชื่อแผน',
         placeholder: plan.name,
         value: plan.name,

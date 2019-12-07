@@ -127,7 +127,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
       })(<Input {...injectedProps} placeholder="ชื่อวิชา" />)}
     </Form.Item>
     <Form.Item label=" ">
-      {getFieldDecorator('required', { valuePropName: 'checked', ...injectedOptions})(<Checkbox {...injectedProps}>วิชาบังคับ (ต้องอยู่ในทุกแผน)</Checkbox>)}
+      {getFieldDecorator('required', { valuePropName: 'checked', ...injectedOptions})(<Checkbox {...injectedProps}>วิชาบังคับ (จะถูกวางลงในทุกแผน)</Checkbox>)}
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 
