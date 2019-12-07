@@ -107,8 +107,8 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
   };
 
   return <Form {...formItemLayout} colon={false}>
-    {getFieldDecorator('isChanged', { initialValue: false })}
-    {getFieldDecorator('key')}
+    {getFieldDecorator('isChanged', { initialValue: false })(<span></span>)}
+    {getFieldDecorator('key')(<span></span>)}
     <Form.Item label=" ">
       <Input.Group>
         {getFieldDecorator('code', injectedOptions)(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" maxLength={10} />)}
@@ -131,13 +131,13 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 
-      <div>
+      <div key={sIdx}>
         <Form.Item label="ชื่อแทนหมู่เรียน">
-          {getFieldDecorator(`sections[${sIdx}][key]`)}
+          {getFieldDecorator(`sections[${sIdx}][key]`)(<span></span>)}
           {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
           {section.lects.map((lect, lectIdx) => {
             const startTime = getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`);
-            return <Card size="small" actions={
+            return <Card size="small" key={`${sIdx}_${lectIdx}`} actions={
               (section.lects.length === 1 || section.lects.length - 1 !== lectIdx) ? [] : 
               [
                 isNonEmpty(getFieldsValue([`sections[${sIdx}][lects][${lectIdx}][dow]`, `sections[${sIdx}][lects][${lectIdx}][start]`, `sections[${sIdx}][lects][${lectIdx}][end]`])) ? 
@@ -214,7 +214,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     
     <Button type="dashed" ghost style={{width: '50%'}} onClick={() => addSection()}><Icon type="plus" /> เพิ่มหมู่เรียน</Button>
     {sections.length > 1 && (
-      (isNonEmpty(getFieldsValue([`sections[${sections.length-1}][name]`, `sections[${sections.length-1}][lects][0][dow]`, `sections[${sections.length-1}][lects][0][start]`, , `sections[${sections.length-1}][lects][0][end]`])) && <Popconfirm
+      (isNonEmpty(getFieldsValue([`sections[${sections.length-1}][name]`, `sections[${sections.length-1}][lects][0][dow]`, `sections[${sections.length-1}][lects][0][start]`, `sections[${sections.length-1}][lects][0][end]`])) && <Popconfirm
         title="ต้องการลบหมู่เรียนล่าสุดหรือไม่?"
         onConfirm={removeLastSection}
         okText="ลบ"

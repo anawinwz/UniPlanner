@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 
-import { Tree, Button, Icon, Empty } from 'antd';
+import { Tree, Button, Icon, Empty, Dropdown, Menu, Modal } from 'antd';
 import { planContext, courseContext } from '../contexts';
 
 import CourseModal from './CourseModal';
@@ -8,7 +8,7 @@ import CourseModal from './CourseModal';
 export default (props) => {
   const [ modal, setModal ] = useState({ visible: false, key: null });
   
-  const { courses } = useContext(courseContext);
+  const { courses, updateCourse } = useContext(courseContext);
   function showAddModal() { showEditModal(); }
   function showEditModal(key) {
     setModal({visible: true, key: (key) ? key : null});
@@ -37,9 +37,75 @@ export default (props) => {
 
   const wrappedTitle = {width: '100%', margin: '0', textOverflow: 'ellipsis', overflowX: 'hidden', whiteSpace: 'no-wrap'};
 
+  const resetMenuName = {
+    thisPlan: 'เคลียร์วิชาในแผนนี้',
+    courses: 'ลบวิชาทั้งหมด',
+    plans: 'ลบแผนทั้งหมด',
+    all: 'ลบข้อมูลทั้งหมด'
+  }
+  const resetMenuItems = ['thisPlan', null, 'courses', 'plans', null, 'all'];
+  const resetEnabled = mode => {
+    switch (mode) {
+      case 'all':
+      case 'courses': return courses.length > 0;
+      case 'thisPlan': return selectedPlan.courses.length > 0;
+      case 'plans': return selected !== 'default' || plans.length > 1 || selectedPlan.courses.length > 0;
+      default: return false;
+    }
+  }
+  const resetMenu = (
+    <Menu onClick={handleResetClick}>
+      {resetMenuItems.map((item, idx) => item !== null ? 
+        <Menu.Item key={item} disabled={!resetEnabled(item)}>{resetMenuName[item]}</Menu.Item> :
+        <Menu.Divider key={idx} />)}
+    </Menu>
+  );
+  function handleResetClick(e) {
+    const name = resetMenuName[e.key];
+    Modal.confirm({
+      title: `ยืนยันการ${name}`,
+      content: <span>คุณแน่ใจหรือว่าต้องการ{name}?<br />การกระทำนี้ไม่สามารถยกเลิกได้</span>,
+      onOk() {
+        switch (e.key) {
+          case 'thisPlan':
+            const newPlan = [...plans];
+            newPlan[selectedIdx].courses = [];
+            updatePlan({ plans });
+            break;
+          case 'all':
+          case 'plans':
+            updatePlan({
+              plans: [{
+                name: 'แผนเริ่มต้น',
+                courses: [],
+                key: 'default'
+              }],
+              selected: 'default'
+            });
+            if (e.key !== 'all') break;
+          case 'courses':
+              updateCourse({ courses: [] });
+              if (e.key !== 'all') {
+                const newPlan = [...plans];
+                newPlan.map(plan => {
+                  plan.courses = [];
+                })
+                updatePlan({ plans: newPlan });
+                break;
+              }
+          default:
+        }
+      }
+    });
+  }
+
   return (
     <div>
-      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button> <Button type="danger" title="รีเซ็ต (เร็วๆ นี้)" disabled><Icon type="undo" /></Button>
+      <Button type="primary" onClick={showAddModal}><Icon type="plus" /> เพิ่ม</Button> 
+      
+      <Dropdown overlay={resetMenu}>
+        <Button type="danger" title="ลบ/เคลียร์ข้อมูล"><Icon type="delete" /><Icon type="down" /></Button>
+      </Dropdown>
       <Tree
         checkable
         checkedKeys={selectedPlan.courses}

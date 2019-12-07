@@ -88,8 +88,8 @@ export default (props) => {
         onConfirm={removeThisCourse}
         okText="ลบ"
         cancelText="ไม่">
-        <Button type="danger">ลบทิ้ง</Button>
-      </Popconfirm> : <span></span>,
+        <Button type="danger" key="remove">ลบทิ้ง</Button>
+      </Popconfirm> : <span key="remove"></span>,
 
       <Button key="submit" type="primary" onClick={handleOk}>
         <Icon type="check" /> {mode === 'edit' ? 'บันทึก' : 'เพิ่ม'}
