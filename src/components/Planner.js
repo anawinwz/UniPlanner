@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import prompt from 'antd-prompt';
 import { Tabs, Modal, Layout } from 'antd';
 
@@ -80,6 +80,25 @@ export default (props) => {
     actions[action](targetKey);
   }
 
+  const plan = plans.find(plan => plan.key === selected);
+  let filteredCourses;
+  let events;
+
+    filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
+                                    .filter(course => course.sections.length > 0)
+    events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
+    filteredCourses.map(course => { course.sections[0].lects.map(lect => {
+      lect.dow.map(dow => {
+        if (typeof events[dow] === 'undefined') events[dow] = [];
+        events[dow].push({
+          id: `${course.key}_${course.sections[0].key}`,
+          name: `${course.code} ${course.name} หมู่ ${course.sections[0].name}`,
+          type: 'custom',
+          startTime: moment(lect.start, 'H:mm'),
+          endTime: moment(lect.end, 'H:mm')
+        });
+      });
+    })});
   
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -95,27 +114,13 @@ export default (props) => {
           activeKey={`${selected}`}
           tabBarStyle={{margin: 0}}>
           {plans.map((plan, idx) => {
-            const filteredCourses = courses.map(course => ({...course, sections: course.sections.filter(section => plan.courses.includes(`${course.key}_${section.key}`))}) )
-                                            .filter(course => course.sections.length > 0)
-            let events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []}
-            filteredCourses.map(course => { course.sections[0].lects.map(lect => {
-              lect.dow.map(dow => {
-                if (typeof events[dow] === 'undefined') events[dow] = [];
-                events[dow].push({
-                  id: `${course.key}_${course.sections[0].key}`,
-                  name: `${course.code} ${course.name} หมู่ ${course.sections[0].name}`,
-                  type: 'custom',
-                  startTime: moment(lect.start, 'H:mm'),
-                  endTime: moment(lect.end, 'H:mm')
-                });
-              });
-            })});
             return <TabPane tab={plan.name} key={`${plan.key}`} closable={plans.length > 1}>
               <Timetable hoursInterval={[8,20]} timeLabel="เวลา" events={events} />
               <CourseTable filteredCourses={filteredCourses} />
             </TabPane>
           })}
         </Tabs>
+        
       </Content>
     </Layout>
   

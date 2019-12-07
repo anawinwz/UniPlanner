@@ -24,7 +24,12 @@ export default (props) => {
         return <span>{text} {record.required && <Tag color="#f50">บังคับ</Tag>}</span>
       }
     },
-    { title: 'หน่วยกิต', dataIndex: 'credits', width: '10%' },
+    { title: 'หน่วยกิต', dataIndex: 'credits', width: '10%',
+      render(text, record, index) {
+        if (!text) return <i style={{color: 'gray'}}>ไม่ระบุ</i>;
+        return text;
+      }
+    },
     { title: 'หมู่เรียน', dataIndex: 'sections[0].name', width: '15%'},
     {
       title: 'เวลาเรียน',
