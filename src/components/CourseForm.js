@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import moment from 'moment';
 
 import { isNonEmpty } from '../utils/check';
-import { Form, Input, InputNumber, Divider, Select, TimePicker, Button, Icon, Checkbox, Card, Popconfirm } from 'antd';
+import { Form, Input, Divider, Select, TimePicker, Button, Icon, Checkbox, Card, Popconfirm } from 'antd';
 
 const { Option } = Select;
 
@@ -112,7 +112,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     <Form.Item label=" ">
       <Input.Group>
         {getFieldDecorator('code', injectedOptions)(<Input {...injectedProps} style={styles.halfWidth} placeholder="รหัสวิชา" maxLength={10} />)}
-        {getFieldDecorator('credits', injectedOptions)(<InputNumber {...injectedProps} style={styles.halfWidth} placeholder="หน่วยกิต" min={1} max={25} />)}
+        {getFieldDecorator('credits', injectedOptions)(<Input type="number" {...injectedProps} style={styles.halfWidth} placeholder="หน่วยกิต" min={1} max={25} />)}
       </Input.Group>
     </Form.Item>
     <Form.Item label="ชื่อวิชา">
@@ -134,7 +134,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
       <div key={sIdx}>
         <Form.Item label="ชื่อแทนหมู่เรียน">
           {getFieldDecorator(`sections[${sIdx}][key]`)(<span></span>)}
-          {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} />)}
+          {getFieldDecorator(`sections[${sIdx}][name]`, injectedOptions)(<Input {...injectedProps} placeholder={`${sIdx+1}`} maxLength={12} />)}
           {section.lects.map((lect, lectIdx) => {
             const startTime = getFieldValue(`sections[${sIdx}][lects][${lectIdx}][start]`);
             return <Card size="small" key={`${sIdx}_${lectIdx}`} actions={
