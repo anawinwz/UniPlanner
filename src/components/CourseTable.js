@@ -33,12 +33,6 @@ export default (props) => {
       render(text, record, index) {
         return record.sections[0].lects.map((lect, lectIdx) => <p key={lectIdx}>{lect.dow.map(dow => dowTag(dow))} {lect.start}-{lect.end}</p>)
       }
-    },
-    {
-      title: 'หมายเหตุ',
-      render(text, record, index) {
-        return <Input disabled title="เร็ว ๆ นี้" />
-      }
     }
   ]
   const tableFooter = pageData => {

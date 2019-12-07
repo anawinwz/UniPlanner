@@ -29,10 +29,14 @@ export default ({ filteredCourses }) => {
       default: return day
     }
   };
-  let events;
+  let events, maxHour;
   const generateEvents = () => {
+    maxHour = 17;
     events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []};
     filteredCourses.map(course => { course.sections[0].lects.map(lect => {
+      const endTime = moment(lect.end, 'H:mm');
+      if (endTime.hour() > maxHour) maxHour = endTime.hour() + 1;
+
       lect.dow.map(dow => {
         if (typeof events[dow] === 'undefined') events[dow] = [];
         events[dow].push({
@@ -40,7 +44,7 @@ export default ({ filteredCourses }) => {
           name: `${course.code || ''} ${course.name} หมู่ ${course.sections[0].name}`,
           type: 'custom',
           startTime: moment(lect.start, 'H:mm'),
-          endTime: moment(lect.end, 'H:mm')
+          endTime: endTime
         });
       });
     })});
@@ -54,7 +58,7 @@ export default ({ filteredCourses }) => {
   generateEvents();
 
   return (<Timetable
-    hoursInterval={[8,20]}
+    hoursInterval={[8, maxHour]}
     timeLabel="เวลา"
     events={events}
     renderEvent={renderEvent}
