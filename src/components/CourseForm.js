@@ -160,7 +160,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                     }
                   ], ...injectedOptions
                 })(
-                <Select {...injectedProps} mode="multiple" placeholder={`วันเรียนในสัปดาห์`}>
+                <Select {...injectedProps} mode="multiple" placeholder={`วันเรียนในสัปดาห์`} allowClear optionFilterProp="children">
                     <Option key="M">จันทร์</Option>
                     <Option key="T">อังคาร</Option>
                     <Option key="W">พุธ</Option>

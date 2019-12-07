@@ -125,7 +125,7 @@ export default (props) => {
         if (typeof events[dow] === 'undefined') events[dow] = [];
         events[dow].push({
           id: `${course.key}_${course.sections[0].key}`,
-          name: `${course.code} ${course.name} หมู่ ${course.sections[0].name}`,
+          name: `${course.code || ''} ${course.name} หมู่ ${course.sections[0].name}`,
           type: 'custom',
           startTime: moment(lect.start, 'H:mm'),
           endTime: moment(lect.end, 'H:mm')
