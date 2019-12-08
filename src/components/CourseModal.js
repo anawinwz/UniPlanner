@@ -103,6 +103,13 @@ export default (props) => {
     const newCourses = [...courses];
     newCourses.splice(targetIdx, 1);
     updateCourse({ courses: newCourses });
+
+    const newPlans = [...plans];
+    plans.map((plan, idx) => {
+      newPlans[idx].courses = plan.courses.filter(key => key.indexOf(targetInfo.key) === -1);
+    });
+    updatePlan({ plans: newPlans });
+
     if (typeof props.handleCancel === 'function') props.handleCancel();
   }
 
