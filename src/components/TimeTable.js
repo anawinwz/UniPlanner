@@ -3,7 +3,7 @@ import Timetable from 'react-timetable-events';
 import moment from 'moment';
 
 export default ({ filteredCourses }) => {
-
+  
   const renderEvent = (event, defaultAttributes, styles) => {
     defaultAttributes.style.background = new (require('color-hash'))({lightness: 0.5}).hex(event.name);
     return (
@@ -29,14 +29,11 @@ export default ({ filteredCourses }) => {
       default: return day
     }
   };
-  let events, maxHour;
+  let events;
   const generateEvents = () => {
-    maxHour = 17;
     events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []};
     filteredCourses.map(course => { course.sections[0].lects.map(lect => {
       const endTime = moment(lect.end, 'H:mm');
-      if (endTime.hour() > maxHour) maxHour = endTime.hour() + 1;
-
       lect.dow.map(dow => {
         if (typeof events[dow] === 'undefined') events[dow] = [];
         events[dow].push({
@@ -58,7 +55,7 @@ export default ({ filteredCourses }) => {
   generateEvents();
 
   return (<Timetable
-    hoursInterval={[8, maxHour]}
+    hoursInterval={[8, 21]}
     timeLabel="เวลา"
     events={events}
     renderEvent={renderEvent}

@@ -81,6 +81,15 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
 
   const disabledHours = [1, 2, 3, 4, 5, 6, 7, 22, 23];
   const disabledStartHours = () => disabledHours;
+  const disabledStartMinutes = selectedHour => {
+    let ret = [];
+    if ([0, 21].includes(selectedHour)) {
+      for (let i = 5; i <= 55; i+=5){
+        ret.push(i);
+      }
+    }
+    return ret;
+  };
   const disabledEndHours = start => {
     let ret = [...disabledHours];
     if (typeof start !== 'object') return ret;
@@ -94,8 +103,10 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
     if (typeof start !== 'object') return ret;
 
     if (selectedHour === start.hour()) {
-      for (let i = 0; i <= start.minute(); i+=5){
-        ret.push(i);
+      if ([0, 21].includes(selectedHour)) {
+        for (let i = 5; i <= 55; i+=5) ret.push(i);
+      } else {
+        for (let i = 0; i <= start.minute(); i+=5) ret.push(i);
       }
     }
     return ret;
@@ -184,6 +195,7 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
                     {...injectedProps}
                     {...timePickerOptions}
                     disabledHours={disabledStartHours}
+                    disabledMinutes={disabledStartMinutes}
                     defaultOpenValue={moment('9:00')}
                     placeholder="เวลาเริ่ม" />)}
                 </Form.Item>
