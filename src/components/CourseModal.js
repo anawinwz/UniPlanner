@@ -43,18 +43,37 @@ export default (props) => {
         newCourses[targetIdx] = values;
         updateCourse({ courses: newCourses });
       } else {
-        if (values.required) {
-          if (values.sections.length > 1) {
-            message.info('วิชาบังคับนี้มีมากกว่า 1 หมู่เรียน โปรดจัดวางลงในแผนด้วยตนเอง', 4000);
-          } else {
-            const newPlans = [...plans];
-            plans.map((plan, idx) => {
-              newPlans[idx].courses.push(`${values.key}_${values.sections[0].key}`);
-            });
-            updatePlan({plans: newPlans});
-          }
-        }
         updateCourse({ courses: [...courses, values] });
+      }
+
+      if (values.required && !targetInfo.required) {
+        if (values.sections.length > 1) {
+          message.info('วิชาบังคับนี้มีมากกว่า 1 หมู่เรียน โปรดจัดวางลงในแผนด้วยตนเอง', 4000);
+        } else {
+          Modal.confirm({
+            title: 'วิชาบังคับใหม่',
+            content: <p>คุณเพิ่งเปลี่ยนให้ [{values.name}] เป็นวิชาบังคับ<br />ต้องการนำไปจัดวางในทุกแผนหรือไม่?</p>,
+            onOk() {
+              const newPlans = [...plans];
+              let addedCount = 0;
+              plans.map((plan, idx) => {
+                if (!plan.courses.find(key => key.indexOf(values.key) !== -1)) {
+                  newPlans[idx].courses.push(`${values.key}_${values.sections[0].key}`);
+                  addedCount++;
+                }
+              });
+              
+              if (addedCount > 0) {
+                message.success(`เพิ่มวิชาบังคับนี้ลงไปใน ${addedCount} แผนแล้ว`)
+                updatePlan({plans: newPlans});
+              } else { 
+                message.info(`ทุกแผนจัดวางวิชานี้ไว้อยู่แล้ว`)
+              }
+            },
+            okText: 'ใช่',
+            cancelText: 'ไม่'
+          });
+        }
       }
 
       if (typeof props.handleOk === 'function') props.handleOk();
