@@ -10,7 +10,7 @@ const transform = obj => {
   let transformed = {};
   if (!obj.sections) return transformed;
 
-  ['key', 'code', 'credits', 'name', 'required'].map(key => {
+  ['key', 'code', 'credits', 'name', 'required', 'multiple'].map(key => {
     if (typeof obj[key] === 'undefined') return;
     transformed[key] = Form.createFormField({
       value: obj[key]
@@ -137,8 +137,11 @@ const CourseForm = forwardRef(({form, fields}, ref) => {
         ...injectedOptions
       })(<Input {...injectedProps} placeholder="ชื่อวิชา" />)}
     </Form.Item>
-    <Form.Item label=" ">
+    <Form.Item label=" " style={{margin: 0}}>
       {getFieldDecorator('required', { valuePropName: 'checked', ...injectedOptions})(<Checkbox {...injectedProps}>วิชาบังคับ (จะถูกวางลงในทุกแผน)</Checkbox>)}
+    </Form.Item>
+    <Form.Item label=" " style={{margin: 0}}>
+      {getFieldDecorator('multiple', { valuePropName: 'checked', ...injectedOptions})(<Checkbox {...injectedProps}>วางหลายหมู่เรียนพร้อมกันได้</Checkbox>)}
     </Form.Item>
     <Divider>หมู่เรียน</Divider>
     {sections.map((section, sIdx) => 

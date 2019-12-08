@@ -31,24 +31,27 @@ export default (props) => {
 
   function onCheck(checkedKeys, info) {
     const newPlan = [...plans];
+    const courseKey = info.node.props.eventKey.split('_')[0];
+    const courseInfo = courses.find(course => course.key === courseKey);
 
-    if (info.checked && info.node.props.halfChecked) {
-      const courseKey = info.node.props.eventKey;
-      checkedKeys = checkedKeys.filter(key => key.indexOf(courseKey) === -1);
-    } else {
-      const newItems = checkedKeys.filter(key => !selectedPlan.courses.includes(key));
-      newItems.map(item => {
-        if (item.indexOf('_') < 0) return;
+    if (!courseInfo.multiple) {
+      if (info.checked && info.node.props.halfChecked) {
+        checkedKeys = checkedKeys.filter(key => key.indexOf(courseKey) === -1);
+      } else {
+        const newItems = checkedKeys.filter(key => !selectedPlan.courses.includes(key));
+        newItems.map(item => {
+          if (item.indexOf('_') < 0) return;
 
-        const courseKey = item.split('_')[0];
-        const dupIdx = checkedKeys.findIndex(key => key !== item && courseKey === key.split('_')[0]);
-        if (dupIdx >= 0) {
-          checkedKeys.splice(dupIdx, 1);
-          
-          const mainIdx = checkedKeys.findIndex(key => key === courseKey);
-          if (mainIdx >= 0) checkedKeys.splice(mainIdx, 1);
-        }
-      });
+          const courseKey = item.split('_')[0];
+          const dupIdx = checkedKeys.findIndex(key => key !== item && courseKey === key.split('_')[0]);
+          if (dupIdx >= 0) {
+            checkedKeys.splice(dupIdx, 1);
+            
+            const mainIdx = checkedKeys.findIndex(key => key === courseKey);
+            if (mainIdx >= 0) checkedKeys.splice(mainIdx, 1);
+          }
+        });
+      }
     }
     newPlan[selectedIdx].courses = checkedKeys;
     updatePlan({ plans });

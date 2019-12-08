@@ -32,19 +32,21 @@ export default ({ filteredCourses }) => {
   let events;
   const generateEvents = () => {
     events = {M: [], T: [], W: [], Th: [], F: [], Sa: [], Su: []};
-    filteredCourses.map(course => { course.sections[0].lects.map(lect => {
-      const endTime = moment(lect.end, 'H:mm');
-      lect.dow.map(dow => {
-        if (typeof events[dow] === 'undefined') events[dow] = [];
-        events[dow].push({
-          id: `${course.key}_${course.sections[0].key}`,
-          name: `${course.code || ''} ${course.name} หมู่ ${course.sections[0].name}`,
-          type: 'custom',
-          startTime: moment(lect.start, 'H:mm'),
-          endTime: endTime
+    filteredCourses.map(course => { 
+      course.sections.map(section => section.lects.map(lect => {
+        const endTime = moment(lect.end, 'H:mm');
+        lect.dow.map(dow => {
+            if (typeof events[dow] === 'undefined') events[dow] = [];
+            events[dow].push({
+              id: `${course.key}_${section.key}`,
+              name: `${course.code || ''} ${course.name} หมู่ ${section.name}`,
+              type: 'custom',
+              startTime: moment(lect.start, 'H:mm'),
+              endTime: endTime
+            });
         });
-      });
-    })});
+      }));
+    });
     
     if (events.Su.length === 0) {
       delete events.Su;
