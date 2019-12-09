@@ -46,7 +46,7 @@ export default (props) => {
         updateCourse({ courses: [...courses, values] });
       }
 
-      if (values.required && !targetInfo.required) {
+      if (mode === 'edit' && values.required && !targetInfo.required) {
         if (values.sections.length > 1) {
           message.info('วิชาบังคับนี้มีมากกว่า 1 หมู่เรียน โปรดจัดวางลงในแผนด้วยตนเอง', 4000);
         } else {
